@@ -1,0 +1,17 @@
+POST http://localhost:4000/register
+Content-Type: application/json
+
+{
+    "username": "Fran02fcg",
+    "password": "Frangarcia.00"
+}
+
+###
+
+POST http://localhost:4000/login
+Content-Type: application/json
+
+{
+    "username": "Fran02fcg",
+    "password": "Frangarcia.00"
+}

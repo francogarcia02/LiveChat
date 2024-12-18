@@ -1,0 +1,93 @@
+
+import bcrypt from 'bcrypt'
+import { validateUser } from './schemas/user.js'
+import { ADEREZO_CONFIG } from './config.js'
+import crypto from 'node:crypto'
+
+export class UserRepository {
+    static async create ({username, password, db}) {
+        //Validar campos
+        const result = validateUser({username: username, password: password})
+        if(result.error){
+            return('Error: ', result.error) 
+        }
+
+        //Verificar que no existe otro usuario con ese nombre  
+        try {
+            const result = await db.execute({
+                sql: `
+                    SELECT  
+                        username
+                    FROM users
+                    WHERE username = ?;
+                `,
+                args: [username]
+            });
+        
+            if (result.rows.length > 0) {
+                return console.log('Usuario encontrado:', result.rows[0]);
+            }
+        } catch (error) {
+            return console.error('Error ejecutando la consulta:', error);
+        }
+
+        const id = crypto.randomUUID()
+        const salt = await bcrypt.genSalt(5)
+        const passwordHashed = await bcrypt.hash(password, salt)
+
+        try {
+            await db.execute({
+                sql: `
+                    INSERT INTO users (id, username, password_hash) 
+                    VALUES (?, ?, ?);
+                `,
+                args: [id, username, passwordHashed]
+            });
+        } catch (error) {   
+            return console.error('Error registrando el usuario: ', error)
+        }
+        
+
+        return id
+    }
+    static async login ({username, password, db}) {
+        const result = validateUser({username: username, password: password})
+        if(result.error){
+            return('Error: ', result.error) 
+        }
+
+        let userTable;
+        try {
+            userTable = await db.execute({
+            sql: `
+                SELECT  
+                    *
+                FROM users
+                WHERE username = ?;
+            `,
+            args: [username]
+            });
+        } catch (error) {
+            console.error('Error ejecutando la consulta:', error);
+            throw new Error('Error al conectarse a la base de datos.');
+        }
+    
+        if (userTable.rows.length == 0) {
+            return console.log('Usuario no encontrado:', result.rows);
+        }
+
+        const user = userTable.rows[0]
+        const isValid = await bcrypt.compare(password, user.password_hash)
+
+        if(!isValid){
+            return('Error: Contraseña erronea')
+        }
+
+        const publicUser = {
+            _id: user.id,
+            username: user.username
+        }
+
+        return publicUser
+    }
+}
