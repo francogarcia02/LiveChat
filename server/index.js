@@ -4,9 +4,12 @@ import { createServer } from 'node:http'
 import { Server } from 'socket.io'
 import dotenv from 'dotenv'
 import { createClient } from '@libsql/client'
-import { PORT } from './config.js'
+import { PORT, SECRET_SWT_KEY } from './config.js'
 import { UserRepository } from './user-repository.js'
 import { corsMiddleWare } from './middlewares/CorsMiddleware.js'
+
+import jwt from 'jsonwebtoken'
+import cookieParser from 'cookie-parser'
 
 dotenv.config()
 const app = express()
@@ -96,15 +99,48 @@ io.on('connection', async (socket) => {
     })
 })
 
+
+app.use(cookieParser())
+
+app.use((req, res, next) => {
+    const token = req.cookies.access_token
+    req.session = {user: null}
+    try {
+        const data = jwt.verify(token, SECRET_SWT_KEY)
+        req.session.user = data
+    } catch (error) {
+        console.log({"Error en el catch del middleware": error})
+    }
+
+    next()
+})
+
 app.post('/login', async (req, res) => {
-    const { username, password } = req.body
-    
+    const {username, password} = req.body
     try {
         const result = await UserRepository.login({username, password, db})
-        res.json({result})
+        const token = jwt.sign(
+            {
+                id: result._id, 
+                username: result.username
+            }, 
+            SECRET_SWT_KEY,
+            {
+                expiresIn: '1h'
+            }
+        )
+        res
+        .cookie('access_token',token,{
+            httpOnly: true,
+            secure: process.eventNames.NODE_ENV === 'production',
+            sameSite: 'strict',
+            maxAge: 1000 * 60  * 60
+        })
+        .json({result})
     } catch (error) {
-        res.status(500).json({"Error en el catch": error})
+        res.status(500).send({"Error en el catch": error})
     }
+
 })
 
 app.post('/register', async (req, res) => {
@@ -117,7 +153,21 @@ app.post('/register', async (req, res) => {
     }
 });
 
-app.post('/logOut', (req, res) => {})
+app.post('/logout', (req, res) => {
+    res
+    .clearCookie('access_token')
+    .redirect('/')
+})
+
+
+app.get('/getData', (req, res) => {
+    const {user} = req.session
+
+    if(!user){
+        return res.status(403).json({Error : 'Access Denied'})
+    }
+    res.json(user);
+})
 
 app.use(logger('dev'))
 
