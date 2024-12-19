@@ -18,10 +18,6 @@ const io = new Server(server, {
     connectionStateRecovery: {}
 })
 
-//MiddelWares
-app.use(express.json());
-app.use(corsMiddleWare())
-
 const db = createClient({
     url: 'libsql://live-chat-fran02fcg.turso.io',
     authToken: process.env.DB_TOKEN
@@ -99,9 +95,12 @@ io.on('connection', async (socket) => {
     })
 })
 
-
+//MiddelWares
+app.use(express.json());
+app.use(corsMiddleWare())
 app.use(cookieParser())
 
+/*
 app.use((req, res, next) => {
     const token = req.cookies.access_token
     req.session = {user: null}
@@ -114,7 +113,7 @@ app.use((req, res, next) => {
 
     next()
 })
-
+*/
 app.post('/login', async (req, res) => {
     const {username, password} = req.body
     try {
@@ -136,9 +135,20 @@ app.post('/login', async (req, res) => {
             sameSite: 'strict',
             maxAge: 1000 * 60  * 60
         })
-        .json({result})
+        .json({
+            message: 'Login exitoso',
+            user: { id: result._id, username: result.username }
+        });
     } catch (error) {
-        res.status(500).send({"Error en el catch": error})
+        console.error('Error en el login:', error);
+        
+        if (error.message === 'Usuario no encontrado') {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        } else if (error.message === 'Contraseña incorrecta') {
+            return res.status(401).json({ message: 'Contraseña incorrecta' });
+        } else {
+            return res.status(500).json({ message: 'Error en el servidor' });
+        }
     }
 
 })

@@ -2,6 +2,7 @@ import cors from 'cors';
 
 const ACCEPTED_ORIGINS = [
     'http://localhost:4000',
+    'http://localhost:3000',
     'http://localhost:8080' // Cambia esto al origen correcto
     // Agrega más orígenes si es necesario
 ];

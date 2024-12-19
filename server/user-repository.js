@@ -50,44 +50,40 @@ export class UserRepository {
 
         return id
     }
-    static async login ({username, password, db}) {
-        const result = validateUser({username: username, password: password})
-        if(result.error){
-            return('Error: ', result.error) 
+    static async login({ username, password, db }) {
+        const result = validateUser({ username, password });
+        if (result.error) {
+            throw new Error(result.error);
         }
-
+    
         let userTable;
         try {
             userTable = await db.execute({
-            sql: `
-                SELECT  
-                    *
-                FROM users
-                WHERE username = ?;
-            `,
-            args: [username]
+                sql: `
+                    SELECT * FROM users WHERE username = ?;
+                `,
+                args: [username]
             });
         } catch (error) {
             console.error('Error ejecutando la consulta:', error);
             throw new Error('Error al conectarse a la base de datos.');
         }
     
-        if (userTable.rows.length == 0) {
-            return console.log('Usuario no encontrado:', result.rows);
+        if (userTable.rows.length === 0) {
+            throw new Error('Usuario no encontrado');
         }
-
-        const user = userTable.rows[0]
-        const isValid = await bcrypt.compare(password, user.password_hash)
-
-        if(!isValid){
-            return('Error: Contraseña erronea')
+    
+        const user = userTable.rows[0];
+        const isValid = await bcrypt.compare(password, user.password_hash);
+    
+        if (!isValid) {
+            throw new Error('Contraseña incorrecta');
         }
-
-        const publicUser = {
+    
+        return {
             _id: user.id,
             username: user.username
-        }
-
-        return publicUser
+        };
     }
+    
 }
