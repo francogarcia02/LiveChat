@@ -20,6 +20,9 @@ export const corsMiddleWare = ({accepted_origins = ACCEPTED_ORIGINS} = {}) => {
             }
 
             return callback(new Error('No permitido, error de CORS'));
-        }
+        },
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+        allowedHeaders: ['Content-Type', 'Authorization']
     });
 };

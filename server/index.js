@@ -100,20 +100,30 @@ app.use(express.json());
 app.use(corsMiddleWare())
 app.use(cookieParser())
 
-/*
+
 app.use((req, res, next) => {
-    const token = req.cookies.access_token
-    req.session = {user: null}
-    try {
-        const data = jwt.verify(token, SECRET_SWT_KEY)
-        req.session.user = data
-    } catch (error) {
-        console.log({"Error en el catch del middleware": error})
+    const token = req.cookies.access_token;
+
+    req.session = req.session || { user: null };
+
+    if (!token) {
+        console.log("No se encontró la cookie 'access_token'");
+        return next();
     }
 
-    next()
-})
-*/
+    try {
+        const data = jwt.verify(token, SECRET_SWT_KEY);
+        req.session.user = data;
+        console.log("Token verificado:", data);
+    } catch (error) {
+        console.error("Error al verificar el token:", error.message);
+        req.session.user = null;
+    }
+
+    next();
+});
+
+
 app.post('/login', async (req, res) => {
     const {username, password} = req.body
     try {
@@ -136,7 +146,7 @@ app.post('/login', async (req, res) => {
             maxAge: 1000 * 60  * 60
         })
         .json({
-            message: 'Login exitoso',
+            message: 'Login successfull',
             user: { id: result._id, username: result.username }
         });
     } catch (error) {
@@ -157,7 +167,10 @@ app.post('/register', async (req, res) => {
     const { username, password } = req.body;
     try {
         const result = await UserRepository.create({ username, password, db });
-        return res.json({'Dentro del try: ': result }); 
+        return res.json({
+            message: 'Register successfull',
+            user: { id: result._id, username: result.username }
+        });
     } catch (error) {
         return res.status(500).json({'Dentro del catch: ': error });
     }
