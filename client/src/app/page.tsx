@@ -1,13 +1,15 @@
 'use client'
 import Header from "./components/header/page";
-import Confirmation from "./components/body/page";
+import Body from "./components/body/page";
 
 export default function Home() {
   
   return (
-    <div className="w-full">
-      <Header/>
-      <Confirmation/>
-    </div>
+    <section>
+      <div className="w-full h-full">
+        <Header/>
+        <Body/>
+      </div>
+    </section>
   );
 }
