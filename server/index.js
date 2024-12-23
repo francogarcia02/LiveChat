@@ -7,6 +7,7 @@ import { createClient } from '@libsql/client'
 import { PORT, SECRET_SWT_KEY } from './config.js'
 import { UserRepository } from './user-repository.js'
 import { corsMiddleWare } from './middlewares/CorsMiddleware.js'
+import cors from 'cors'
 
 import jwt from 'jsonwebtoken'
 import cookieParser from 'cookie-parser'
@@ -15,7 +16,10 @@ dotenv.config()
 const app = express()
 const server = createServer(app)
 const io = new Server(server, {
-    connectionStateRecovery: {}
+    connectionStateRecovery: {},
+    cors: {
+        origin: "*",
+    }
 })
 
 const db = createClient({
@@ -46,21 +50,20 @@ await db.execute(`
 );    
 `)
 
+
 await db.execute(`
     CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    conversation_id BINARY(16) NOT NULL,
-    sender_id BINARY(16) NOT NULL,
     content TEXT NOT NULL,
-    sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
-    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
+    username TEXT NOT NULL
 );
 `)
 
+
 io.on('connection', async (socket) => {
-    socket.on('chat message', async (msg) => {
-        const username = socket.handshake.auth.username ?? 'anonymous'
+    socket.on('chat message', async (message) => {
+        const {msg, username} = message
+        console.log(message)
         let result
         try {
             result = await db.execute({
@@ -71,7 +74,6 @@ io.on('connection', async (socket) => {
             console.error(error)
             return
         }
-
         io.emit('chat message', msg, result.lastInsertRowid.toString(), username)
     })
 
@@ -97,8 +99,9 @@ io.on('connection', async (socket) => {
 
 //MiddelWares
 app.use(express.json());
-app.use(corsMiddleWare())
+
 app.use(cookieParser())
+app.use(cors({ origin: '*' }));
 
 
 app.use((req, res, next) => {

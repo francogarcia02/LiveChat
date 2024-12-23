@@ -54,15 +54,15 @@ const Register = () => {
                     <h2 className="text-3xl">Registro de sesion</h2>
                     <div className="flex flex-wrap justify-between items-center w-full p-2">
                         <h5>Usuario: </h5>
-                        <input onChange={(e)=>setUsername(e.target.value)} className="w-full border 1px gray rounded-full p-2"/>
+                        <input onChange={(e)=>setUsername(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black"/>
                     </div>
                     <div className="flex flex-wrap justify-between items-center w-full p-2">
                         <h5>Contraseña: </h5>
-                        <input onChange={(e)=>setPassword(e.target.value)} className="w-full border 1px gray rounded-full p-2"/>
+                        <input onChange={(e)=>setPassword(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black"/>
                     </div>
                     <div className="flex flex-wrap justify-between items-center w-full p-2">
                         <h5>Repetir contraseña: </h5>
-                        <input onChange={(e)=>setPassword2(e.target.value)} className="w-full border 1px gray rounded-full p-2"/>
+                        <input onChange={(e)=>setPassword2(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black"/>
                     </div>
                     <button className="btn btn-primary" onClick={() => handleSubmit()}>Registrarse</button>
                 </div>

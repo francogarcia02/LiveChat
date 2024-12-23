@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const Check: React.FC<{ title: string; name: string | undefined }> = ({ title, name }) => {
   const router = useRouter();

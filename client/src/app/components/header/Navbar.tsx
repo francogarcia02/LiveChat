@@ -17,13 +17,17 @@ const Navbar = () => {
     }
 
     return(
-        <div className="flex justify-between items-center with-full p-5 m-5 bg-blue-500 rounded-full">
-            <Link href='/'>LiveChat</Link>
-            {authstatus?.user?.id? 
-            <form><button type="submit" className="btn" onClick={() => {handleLogOut()}}>LogOut</button></form>
-            :
-            <button type="submit" className="btn" ><Link href={'/login'}>Login</Link></button>
+        <div className="flex justify-between items-center with-full m-5 bg-blue-500 rounded-full">
+            <div className="p-4 ps-5 font-bold">
+                <Link href='/'>LiveChat</Link>
+            </div>
+            <div className="me-5">
+                {authstatus?.user?.id? 
+                <form><button type="submit" className="btn" onClick={() => {handleLogOut()}}>LogOut</button></form>
+                :
+                <button type="submit" className="btn" ><Link href={'/login'}>Login</Link></button>
             }
+            </div>
         </div>
     )
 }
