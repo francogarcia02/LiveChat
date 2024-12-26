@@ -1,7 +1,7 @@
 'use client'
 import Header from "@/app/components/header/page"
 import { useState } from "react"
-import Check from "../../Check"
+import Check from "../components/Check"
 
 interface LoginResponse {
     message?: string;

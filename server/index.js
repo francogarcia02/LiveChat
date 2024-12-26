@@ -99,9 +99,8 @@ io.on('connection', async (socket) => {
 
 //MiddelWares
 app.use(express.json());
-
+app.use(corsMiddleWare())
 app.use(cookieParser())
-app.use(cors({ origin: '*' }));
 
 
 app.use((req, res, next) => {
