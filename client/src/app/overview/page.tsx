@@ -2,6 +2,7 @@
 
 import Chat from "./Chat"
 import Input from "./Input";
+import Conversations from "./Conversations";
 import Header from "../components/header/page"
 import { io, Socket } from "socket.io-client";
 import { useState, useEffect, useRef } from "react";
@@ -43,12 +44,19 @@ const ChatContainer = () => {
     return (
         <section>
             <Header/>
-            <div className="h-full flex flex-col justify-between items-center m-1">
-                <div className="sm:w-full lg:w-1/3 h-screen flex flex-col border border-gray-300 rounded-lg relative">
-                    <Chat messages={messages} currentUser={user} />
-                    <Input onSendMessage={sendMessage} />
+            {user ? 
+                <div className="h-full flex flex-wrap justify-center items-center m-1">
+                    <Conversations/>
+                    <div className="sm:w-full lg:w-1/3  h-[250px] lg:h-[540px] flex flex-col border border-gray-300 rounded-lg relative">
+                        <Chat messages={messages} currentUser={user} />
+                        <Input onSendMessage={sendMessage} />
+                    </div>
                 </div>
-            </div>
+            :
+                <div className="flex justify-center items-center p-20 m-20">
+                    <h1 className="text-3xl font-bold">Login Required</h1>
+                </div>
+            }
         </section>
     )
 }

@@ -26,9 +26,9 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
       </div>
       <div className="flex flex-col justify-center items-end">
         {user ? (
-            <Link href="/chat">
+            <Link href="/overview">
                 <button className="bg-pink-500 hover:bg-pink-600 text-white text-lg py-2 px-8 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-500 mb-6">
-                    Chat
+                    Overview
                 </button>
             </Link>
         ) : (

@@ -5,7 +5,10 @@ import { Server } from 'socket.io'
 import dotenv from 'dotenv'
 import { createClient } from '@libsql/client'
 import { PORT, SECRET_SWT_KEY } from './config.js'
+
 import { UserRepository } from './user-repository.js'
+import { ConversationRepository } from './conversation-repository.js'
+
 import { corsMiddleWare } from './middlewares/CorsMiddleware.js'
 import cors from 'cors'
 
@@ -41,8 +44,8 @@ await db.execute(`
 await db.execute(`
     CREATE TABLE IF NOT EXISTS conversations (
     id TEXT PRIMARY KEY,
-    user1_id BINARY(16) NOT NULL,
-    user2_id BINARY(16) NOT NULL,
+    user1_id TEXT,
+    user2_id TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(user1_id, user2_id),
     FOREIGN KEY (user1_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -52,12 +55,24 @@ await db.execute(`
 
 
 await db.execute(`
-    CREATE TABLE IF NOT EXISTS messages (
+    CREATE TABLE IF NOT EXISTS messages_global (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     content TEXT NOT NULL,
     username TEXT NOT NULL
 );
 `)
+
+await db.execute(`
+    CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    conversation_id TEXT NOT NULL,     
+    sender_id TEXT NOT NULL,           
+    content TEXT,  
+    FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
+);
+`)
+
 
 
 io.on('connection', async (socket) => {
@@ -67,7 +82,7 @@ io.on('connection', async (socket) => {
         let result
         try {
             result = await db.execute({
-                sql: `INSERT INTO messages (content, username) VALUES (?, ?)`,
+                sql: `INSERT INTO messages_global (content, username) VALUES (?, ?)`,
                 args: [msg, username]
             })
         } catch (error) {
@@ -80,7 +95,7 @@ io.on('connection', async (socket) => {
     if (!socket.recovered) {
         try {
             const result = await db.execute({
-                sql: `SELECT * FROM messages WHERE id > ?`,
+                sql: `SELECT * FROM messages_global WHERE id > ?`,
                 args: [socket.handshake.auth.serverOffset ?? 0]
             })
 
@@ -125,6 +140,7 @@ app.use((req, res, next) => {
     next();
 });
 
+//Users Routes
 
 app.post('/login', async (req, res) => {
     const {username, password} = req.body
@@ -184,7 +200,6 @@ app.post('/logout', (req, res) => {
     .redirect('/')
 })
 
-
 app.get('/getData', (req, res) => {
     const {user} = req.session
 
@@ -193,6 +208,18 @@ app.get('/getData', (req, res) => {
     }
     res.json(user);
 })
+
+//Messages Routes
+
+app.post('/create-conversation', async (req, res) => {
+    const { username1, username2 } = req.body;
+    
+    // Cambia user1 y user2 por username1 y username2
+    const result = await ConversationRepository.create({ user1: username1, user2: username2, db });
+
+    res.json(result); // Responde con el resultado
+});
+
 
 app.use(logger('dev'))
 
