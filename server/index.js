@@ -6,8 +6,8 @@ import dotenv from 'dotenv'
 import { createClient } from '@libsql/client'
 import { PORT, SECRET_SWT_KEY } from './config.js'
 
-import { UserRepository } from './user-repository.js'
-import { ConversationRepository } from './conversation-repository.js'
+import { UserRepository } from './repositories/user-repository.js'
+import { ConversationRepository } from './repositories/conversation-repository.js'
 
 import { corsMiddleWare } from './middlewares/CorsMiddleware.js'
 import cors from 'cors'
@@ -213,13 +213,44 @@ app.get('/getData', (req, res) => {
 
 app.post('/create-conversation', async (req, res) => {
     const { username1, username2 } = req.body;
-    
-    // Cambia user1 y user2 por username1 y username2
-    const result = await ConversationRepository.create({ user1: username1, user2: username2, db });
+    let result
+    try {
+        result = await ConversationRepository.create({ user1: username1, user2: username2, db });
+    } catch (error) {
+        res.status(500).json({'Error en el catch': error})
+    }
 
-    res.json(result); // Responde con el resultado
+    if(!result.error){
+        return res.json({
+            message: 'Create Conversation successfull',
+            result: result
+        });
+    }
+
+    res.status(500).json({'Error': result.error})
 });
 
+app.post('/delete-conversation', async (req, res) => {
+    const { username1, username2 } = req.body;
+    let result
+    
+    try {
+        result = await ConversationRepository.delete({ user1: username1, user2: username2, db });
+    } catch (error) {
+        res.status(500).json({'Error en el catch': error})
+    }
+
+
+    if(!result.error){
+        return res.json({
+            message: 'Delete Conversation successfull',
+            result: result
+        });
+    }
+
+    res.status(500).json({'Error': result.error})
+    
+});
 
 app.use(logger('dev'))
 

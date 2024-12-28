@@ -1,7 +1,7 @@
 
 import bcrypt from 'bcrypt'
-import { validateUser } from './schemas/user.js'
-import { ADEREZO_CONFIG } from './config.js'
+import { validateUser } from '../schemas/user.js'
+import { ADEREZO_CONFIG } from '../config.js'
 import crypto from 'node:crypto'
 
 export class UserRepository {

@@ -29,3 +29,13 @@ Content-Type: application/json
     "username1": "Fran02fcg",
     "username2": "Franco"
 }
+
+###
+
+POST http://localhost:4000/delete-conversation
+Content-Type: application/json
+
+{
+    "username1": "Fran02fcg",
+    "username2": "Franco"
+}
