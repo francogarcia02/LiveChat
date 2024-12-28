@@ -85,17 +85,44 @@ export class ConversationRepository {
     static async getAll ({username, db}) {
         const id = await getOneId({username, db})
         
-        let result
+        let conversations
         try {
-            result = await db.execute({
+            const result = await db.execute({
                 sql: `SELECT * FROM conversations
                     WHERE user1_id = ? OR user2_id = ?`,
                 args: [id, id]
             })
+            conversations = result.rows
         } catch (error) {
             return {error: 'Error al buscar conversaciones ', error}
         }
 
-        return result
+        let transformed_conversations = []
+        
+        for (const conv of conversations) {
+            try {
+                const username1Row = await db.execute({
+                    sql: `SELECT * FROM users WHERE id = ?`,
+                    args: [conv.user1_id],
+                });
+                const username2Row = await db.execute({
+                    sql: `SELECT * FROM users WHERE id = ?`,
+                    args: [conv.user2_id],
+                });
+    
+                const username1 = username1Row.rows[0]?.username || 'Unknown';
+                const username2 = username2Row.rows[0]?.username || 'Unknown';
+    
+                transformed_conversations.push({
+                    username1,
+                    username2,
+                    id: conv.id,
+                });
+            } catch (error) {
+                return { error: 'Error obteniendo datos de usuarios', details: error };
+            }
+        }
+
+        return transformed_conversations
     }
 }

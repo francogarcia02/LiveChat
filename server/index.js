@@ -78,7 +78,6 @@ await db.execute(`
 io.on('connection', async (socket) => {
     socket.on('chat message', async (message) => {
         const {msg, username} = message
-        console.log(message)
         let result
         try {
             result = await db.execute({
@@ -91,6 +90,16 @@ io.on('connection', async (socket) => {
         }
         io.emit('chat message', msg, result.lastInsertRowid.toString(), username)
     })
+
+    socket.on('join_room', (roomId) => {
+        socket.join(roomId); 
+        console.log(`Usuario ${socket.id} se unió a la sala: ${roomId}`);
+    });
+
+    socket.on('private_message', ({ roomId, message, sender }) => {
+        io.to(roomId).emit('private_message', { message, sender });
+        console.log(`Mensaje enviado en sala ${roomId}:`, message);
+    });
 
     if (!socket.recovered) {
         try {
@@ -131,7 +140,6 @@ app.use((req, res, next) => {
     try {
         const data = jwt.verify(token, SECRET_SWT_KEY);
         req.session.user = data;
-        console.log("Token verificado:", data);
     } catch (error) {
         console.error("Error al verificar el token:", error.message);
         req.session.user = null;
@@ -255,7 +263,7 @@ app.post('/delete-conversation', async (req, res) => {
 app.post('/get-conversations', async (req, res) => {
     const { username } = req.body
     const result = await ConversationRepository.getAll({username, db})
-    
+
     if(!result.error){
         return res.json({
             message: 'Conversations Retrieved Successfully',

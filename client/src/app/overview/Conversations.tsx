@@ -1,7 +1,66 @@
+import GetConversations from "../utils/GetConversations"
+import AuthStatus from "../utils/AuthStatus"
+import { useEffect, useState } from "react";
+
+interface Conversation {
+    id: string;
+    username1: string;
+    username2: string;
+}
+
 const Conversations = () => {
+    const authstatus = AuthStatus()
+    const username = authstatus?.user?.username
+
+    const [conversations, setConversations] = useState<Conversation[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+
+    useEffect(() => {
+        const fetchConversations = async () => {
+            try {
+                if(username){
+                    const data = await GetConversations(username);
+                    setConversations(data.result);  // Guarda las conversaciones en el estado
+                    setLoading(false); 
+                }
+                 // Cambia el estado a no cargando
+            } catch (error) {
+                console.log(error)
+                setError('Error fetching conversatiooons');
+                setLoading(false);
+            }
+        };
+
+        fetchConversations();
+    }, [username]); // El efecto solo se ejecuta cuando el username cambia
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>{error}</div>;
+    }
+
     return(
-        <div className="w-1/2 h-full bg-gray-800">
-            Conversations
+        <div className="flex flex-col justify-start w-1/3 h-full bg-gray-800 pt-2 pb-20 ps-5 pe-5 rounded-lg">
+            Conversationssss
+            <div className="mt-5 m-b5">
+            {conversations &&
+            conversations.map(conv => (
+                <div className="w-full p-2 rounded-lg bg-blue-500" key={conv.id}>
+                    <h1 className="font-bold">{ conv.username1 === username ?
+                    conv.username2
+                    :
+                    conv.username1
+                    }</h1>
+                </div>
+                
+            ))
+            }
+            </div>
         </div>
     )
 }

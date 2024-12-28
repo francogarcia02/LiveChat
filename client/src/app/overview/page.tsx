@@ -10,13 +10,14 @@ import AuthStatus from "@/app/utils/AuthStatus";
 
 const ChatContainer = () => {
     const [messages, setMessages] = useState<{ msg: string; username: string }[]>([]);
-    const [serverOffset, setServerOffset] = useState<number>(0);
+    const [ , setServerOffset] = useState<number>(0);
     const socketRef = useRef<Socket | null>(null);
     
-    console.log(serverOffset)
+    
 
     const data = AuthStatus();
     const user = data?.user?.username;
+
   
     useEffect(() => {
       socketRef.current = io("http://localhost:4000", {
@@ -45,7 +46,7 @@ const ChatContainer = () => {
         <section>
             <Header/>
             {user ? 
-                <div className="h-full flex flex-wrap justify-center items-center m-1">
+                <div className="h-full flex flex-wrap justify-center items-start m-1 gap-1">
                     <Conversations/>
                     <div className="sm:w-full lg:w-1/3  h-[250px] lg:h-[540px] flex flex-col border border-gray-300 rounded-lg relative">
                         <Chat messages={messages} currentUser={user} />
