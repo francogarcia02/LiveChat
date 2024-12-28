@@ -1,9 +1,9 @@
 import crypto from 'node:crypto'
-import { getUsersId } from '../utils/getUsersIds.js';
+import { getOneId, getTwoId } from '../utils/getUsersIds.js';
 
 export class ConversationRepository {
     static async create ({user1, user2, db}) {
-        const result = await getUsersId({user1, user2, db})
+        const result = await getTwoId({user1, user2, db})
         
         if(result.error){
             return result
@@ -20,7 +20,7 @@ export class ConversationRepository {
                     INSERT INTO conversations (id, user1_id, user2_id) 
                     VALUES (?, ?, ?);
                 `,
-                args: [id, user1_id.id, user2_id.id]
+                args: [id, user1_id, user2_id]
             });
             response = result
         } catch (error) {   
@@ -28,15 +28,16 @@ export class ConversationRepository {
         }
         return response
     }
+    
     static async delete ({user1, user2, db}) {
-        const ids = await getUsersId({user1, user2, db})
+        const ids = await getTwoId({user1, user2, db})
 
         if(ids.error){
             return ids
         }
 
-        const user1_id = ids.user1_id.id
-        const user2_id = ids.user2_id.id
+        const user1_id = ids.user1_id
+        const user2_id = ids.user2_id
 
         let conversation
         try {
@@ -78,6 +79,23 @@ export class ConversationRepository {
         } catch (error) {   
             return {error: 'Error eliminando la conversacion', error}
         }
+        return result
+    }
+    
+    static async getAll ({username, db}) {
+        const id = await getOneId({username, db})
+        
+        let result
+        try {
+            result = await db.execute({
+                sql: `SELECT * FROM conversations
+                    WHERE user1_id = ? OR user2_id = ?`,
+                args: [id, id]
+            })
+        } catch (error) {
+            return {error: 'Error al buscar conversaciones ', error}
+        }
+
         return result
     }
 }

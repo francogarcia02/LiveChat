@@ -252,6 +252,22 @@ app.post('/delete-conversation', async (req, res) => {
     
 });
 
+app.post('/get-conversations', async (req, res) => {
+    const { username } = req.body
+    const result = await ConversationRepository.getAll({username, db})
+    
+    if(!result.error){
+        return res.json({
+            message: 'Conversations Retrieved Successfully',
+            result: result
+        });
+    }
+    
+
+    res.status(500).json({error: result.error})
+
+})
+
 app.use(logger('dev'))
 
 server.listen(PORT, () => {
