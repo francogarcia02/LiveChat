@@ -11,8 +11,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
       <div className="flex justify-between items-center">
         <div className="flex flex-col justify-center items-start">
             <h1 className="text-4xl text-pink-500 sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4">LinkUp</h1>
-            <h1 className="sm:text-3xl md:text-xl lg:text-3xl font-bold mb-4">¡Conéctate con usuarios de todo el mundo!</h1>
-            <p className="text-lg sm:text-base md:text-lg mb-6">Chatea en tiempo real y haz nuevas conexiones ahora mismo.</p>
+            <h1 className="sm:text-3xl md:text-xl lg:text-3xl font-bold mb-4">Connect with users from around the world!</h1>
+            <p className="text-lg sm:text-base md:text-lg mb-6">Chat in real time and make new connections right now.</p>
         </div>
         <div>
         <Image
@@ -45,8 +45,8 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
             </Link>
           </div>
         )}
-        <div className="text-sm sm:text-xs text-white">
-          <span>Conectando a personas desde</span>
+        <div className="flex justify-center items-center text-sm sm:text-xs text-white">
+          <span>Connecting people from</span>
           <span className="ml-2 text-2xl">🌍</span>
         </div>
       </div>

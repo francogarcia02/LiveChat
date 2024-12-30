@@ -2,6 +2,7 @@ import GetConversations from "../utils/GetConversations"
 import AuthStatus from "../utils/AuthStatus"
 import { useEffect, useState } from "react";
 import Conversation from "./Conversation";
+import AddConversation from "./AddConversation";
 
 interface Conversation {
     id: string;
@@ -14,6 +15,13 @@ interface Props {
 }
 
 const Conversations = ({setConversation}: Props) => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [isReload, setIsReload] = useState<boolean>(false)
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
+
     const authstatus = AuthStatus()
     const username = authstatus?.user?.username
 
@@ -23,14 +31,15 @@ const Conversations = ({setConversation}: Props) => {
 
 
     useEffect(() => {
+        setIsReload(false)
         const fetchConversations = async () => {
             try {
                 if(username){
                     const data = await GetConversations(username);
-                    setConversations(data.result);  // Guarda las conversaciones en el estado
+                    setConversations(data.result);  
                     setLoading(false); 
                 }
-                 // Cambia el estado a no cargando
+                 
             } catch (error) {
                 console.log(error)
                 setError('Error fetching conversatiooons');
@@ -39,7 +48,7 @@ const Conversations = ({setConversation}: Props) => {
         };
 
         fetchConversations();
-    }, [username]); // El efecto solo se ejecuta cuando el username cambia
+    }, [username, isReload]); 
 
     if (loading) {
         return <div>Loading...</div>;
@@ -51,14 +60,18 @@ const Conversations = ({setConversation}: Props) => {
 
     return(
         <div className="flex flex-col justify-start w-1/3 h-full bg-gray-800 pt-2 pb-20 ps-5 pe-5 rounded-lg">
-            Conversationssss
+            <div className="flex justify-between items-center">
+                <h1>Conversations</h1>
+                <button className="btn btn-primary" onClick={()=>openModal()}>Add</button>
+            </div>
             <div className="mt-5 m-b5 flex flex-col gap-2">
                 {conversations &&
                 conversations.map(conv => (
-                    <Conversation key={conv.id} conversation={conv} setConversation={setConversation} username={username}/>
+                    <Conversation key={conv.id} setIsReload={setIsReload} conversation={conv} setConversation={setConversation} username={username}/>
                 ))
                 }
             </div>
+            <AddConversation isOpen={isModalOpen} setIsReload={setIsReload} onClose={closeModal} username={username} />
         </div>
     )
 }
