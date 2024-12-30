@@ -10,7 +10,7 @@ import AuthStatus from "@/app/utils/AuthStatus";
 
 const ChatContainer = () => {
     const [messages, setMessages] = useState<{ msg: string; username: string }[]>([]);
-    const [ , setServerOffset] = useState<number>(0);
+    const [conversationId, setConversationId] = useState<string>('')
     const socketRef = useRef<Socket | null>(null);
     
     
@@ -20,26 +20,34 @@ const ChatContainer = () => {
 
   
     useEffect(() => {
-      socketRef.current = io("http://localhost:4000", {
-        auth: { username: user },
-      });
-  
-      const socket = socketRef.current;
-  
-      socket.on("chat message", (msg: string, offset: number, username: string) => {
-        setMessages((prevMessages) => [...prevMessages, { msg, username }]);
-        setServerOffset(offset);
-      });
-  
-      return () => {
-        socket.disconnect();
-      };
-    }, [user]);
-  
-    const sendMessage = (message: string) => {
-      const messageData = { msg: message, username: user || "Anonymous" };
-      socketRef.current?.emit("chat message", messageData);
-    };
+      if (conversationId) {
+          setMessages([]);
+          socketRef.current = io("http://localhost:4000", {
+              auth: { username: user },
+          });
+
+          const socket = socketRef.current;
+
+          socket.emit("join_conversation", conversationId);
+
+          socket.on("chat_message", ({ msg, username }) => {
+              setMessages((prevMessages) => [...prevMessages, { msg, username }]);
+          });
+
+          socket.emit("fetch_messages", { conversationId });
+
+          return () => {
+              socket.disconnect();
+          };
+      }
+  }, [conversationId, user]);
+
+  const sendMessage = (message: string) => {
+      if (conversationId) {
+          const messageData = { conversationId, msg: message, username: user || "Anonymous" };
+          socketRef.current?.emit("chat_message", messageData);
+      }
+  };
   
 
     return (
@@ -47,9 +55,9 @@ const ChatContainer = () => {
             <Header/>
             {user ? 
                 <div className="h-full flex flex-wrap justify-center items-start m-1 gap-1">
-                    <Conversations/>
+                    <Conversations setConversation={setConversationId}/>
                     <div className="sm:w-full lg:w-1/3  h-[250px] lg:h-[540px] flex flex-col border border-gray-300 rounded-lg relative">
-                        <Chat messages={messages} currentUser={user} />
+                        <Chat messages={messages} currentUser={user} conversation={conversationId} />
                         <Input onSendMessage={sendMessage} />
                     </div>
                 </div>

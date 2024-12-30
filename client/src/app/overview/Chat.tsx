@@ -8,9 +8,11 @@ type Message = {
 type ChatMessagesProps = {
   messages: Message[];
   currentUser: string | undefined;
+  conversation: string | undefined;
 };
 
-const Chat: React.FC<ChatMessagesProps> = ({ messages, currentUser }) => {
+const Chat: React.FC<ChatMessagesProps> = ({ messages, currentUser}) => {
+
   return (
     <div className="w-full flex flex-col overflow-y-auto flex-grow p-4">
       {messages.map((elem, index) => (

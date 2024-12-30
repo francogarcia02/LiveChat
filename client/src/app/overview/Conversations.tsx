@@ -1,6 +1,7 @@
 import GetConversations from "../utils/GetConversations"
 import AuthStatus from "../utils/AuthStatus"
 import { useEffect, useState } from "react";
+import Conversation from "./Conversation";
 
 interface Conversation {
     id: string;
@@ -8,7 +9,11 @@ interface Conversation {
     username2: string;
 }
 
-const Conversations = () => {
+interface Props {
+    setConversation: (id: string) => void;
+}
+
+const Conversations = ({setConversation}: Props) => {
     const authstatus = AuthStatus()
     const username = authstatus?.user?.username
 
@@ -47,19 +52,12 @@ const Conversations = () => {
     return(
         <div className="flex flex-col justify-start w-1/3 h-full bg-gray-800 pt-2 pb-20 ps-5 pe-5 rounded-lg">
             Conversationssss
-            <div className="mt-5 m-b5">
-            {conversations &&
-            conversations.map(conv => (
-                <div className="w-full p-2 rounded-lg bg-blue-500" key={conv.id}>
-                    <h1 className="font-bold">{ conv.username1 === username ?
-                    conv.username2
-                    :
-                    conv.username1
-                    }</h1>
-                </div>
-                
-            ))
-            }
+            <div className="mt-5 m-b5 flex flex-col gap-2">
+                {conversations &&
+                conversations.map(conv => (
+                    <Conversation key={conv.id} conversation={conv} setConversation={setConversation} username={username}/>
+                ))
+                }
             </div>
         </div>
     )

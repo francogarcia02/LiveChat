@@ -66,55 +66,60 @@ await db.execute(`
     CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     conversation_id TEXT NOT NULL,     
-    sender_id TEXT NOT NULL,           
+    sender TEXT NOT NULL,           
     content TEXT,  
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
-    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (sender) REFERENCES users(username) ON DELETE CASCADE
 );
 `)
 
 
 
 io.on('connection', async (socket) => {
-    socket.on('chat message', async (message) => {
-        const {msg, username} = message
-        let result
+    socket.on('join_conversation', (conversationId) => {
+        socket.join(conversationId);
+        console.log(`El usuario ${socket.id} se unio a la sala ${conversationId}`)
+    });
+
+    socket.on('chat_message', async ({ conversationId, msg, username }) => {
+        let result;
         try {
             result = await db.execute({
-                sql: `INSERT INTO messages_global (content, username) VALUES (?, ?)`,
-                args: [msg, username]
-            })
+                sql: `INSERT INTO messages (conversation_id, sender, content) VALUES (?, ?, ?)`,
+                args: [conversationId, username, msg],
+            });
         } catch (error) {
-            console.error(error)
-            return
+            console.error(error);
+            return;
         }
-        io.emit('chat message', msg, result.lastInsertRowid.toString(), username)
-    })
 
-    socket.on('join_room', (roomId) => {
-        socket.join(roomId); 
-        console.log(`Usuario ${socket.id} se unió a la sala: ${roomId}`);
+        io.to(conversationId).emit('chat_message', {
+            id: result.lastInsertRowid.toString(),
+            msg,
+            username,
+        });
     });
 
-    socket.on('private_message', ({ roomId, message, sender }) => {
-        io.to(roomId).emit('private_message', { message, sender });
-        console.log(`Mensaje enviado en sala ${roomId}:`, message);
-    });
+    
 
-    if (!socket.recovered) {
+    socket.on('fetch_messages', async ({ conversationId, offset = 0 }) => {
         try {
             const result = await db.execute({
-                sql: `SELECT * FROM messages_global WHERE id > ?`,
-                args: [socket.handshake.auth.serverOffset ?? 0]
-            })
+                sql: `SELECT * FROM messages WHERE conversation_id = ? AND id > ? ORDER BY id ASC`,
+                args: [conversationId, offset],
+            });
 
-            result.rows.forEach(row => {
-                socket.emit('chat message', row.content, row.id.toString(), row.username)
-            })
+            result.rows.forEach((row) => {
+                socket.emit('chat_message', {
+                    id: row.id.toString(),
+                    msg: row.content,
+                    username: row.sender,
+                });
+            });
         } catch (error) {
-            console.error(error)
+            console.error(error);
         }
-    }
+    });
 
     socket.on('disconnect', () => {
         console.log('A user has disconnected!')
