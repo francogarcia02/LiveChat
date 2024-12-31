@@ -1,11 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type DashboardProps = {
   user?: string;
 };
 
 const Dashboard: React.FC<DashboardProps> = ({ user }) => {
+  const [condition, setCondition] = useState<boolean>(false)
+
+  useEffect(()=>{ 
+    if(user){
+      setCondition(true)
+    }
+  },[user])
+  
   const renderContent = () => (
     <>
       <div className="flex justify-between items-center">
@@ -25,7 +34,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         
       </div>
       <div className="flex flex-col justify-center items-end">
-        {user ? (
+        {condition ? (
             <Link href="/overview">
                 <button className="bg-pink-500 hover:bg-pink-600 text-white text-lg py-2 px-8 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-500 mb-6">
                     Overview

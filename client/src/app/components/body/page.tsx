@@ -1,22 +1,23 @@
 'use client'
 
 import { useEffect, useState } from "react"
-import AuthStatus from "../../utils/AuthStatus"
 import Dashboard from "./DashBoard"
+import { useContext } from 'react';
+import { UserContext } from "@/app/context/userContext";
 
 const Body = () => {
-    const [user, setUser] = useState<string>('')
-    const authstatus = AuthStatus()
+    const {user} = useContext(UserContext)
+    const [userr, setUser] = useState<string | undefined>('')
     
     useEffect(()=>{
-        if(authstatus?.user?.id){
-            setUser(authstatus?.user?.id)
+        if(user.id !== ''){
+            setUser(user.username)
         }
-    },[authstatus])
+    },[user])
     
     return(
         <div className="h-full w-full">
-            <Dashboard user={user}/>
+            <Dashboard user={userr}/>
         </div>
     )
 }

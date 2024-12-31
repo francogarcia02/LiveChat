@@ -2,6 +2,8 @@
 import Header from "@/app/components/header/page"
 import { useState } from "react"
 import Check from "../components/Check"
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
 
 interface LoginResponse {
     message?: string;
@@ -16,6 +18,8 @@ const Login = () => {
     const [password, setPassword] = useState<string>('')
     const [response, setResponse] = useState<LoginResponse>()
 
+    const {login} = useContext(UserContext)
+
     const handleSubmit = async () => {
         fetch('http://localhost:4000/login', {
             method: 'POST',
@@ -28,6 +32,7 @@ const Login = () => {
         .then(response => response.json())
         .then(data=>{
             setResponse(data)
+            login(data.user)
             console.log(data)
         })
     };

@@ -2,8 +2,10 @@
 import { useEffect } from "react";
 import { useUser } from "./useUserQuery";
 
+
 const AuthStatus = () => {
     const { data, isLoading, error, refetch } = useUser();
+    
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -15,7 +17,9 @@ const AuthStatus = () => {
 
     if(error) return {error: error.message}
     if(isLoading) return {isLoading: true}
-    if(data) return {user: data}
+    if(data){
+        return{user: data}
+    }
 
 }
 
