@@ -1,8 +1,9 @@
 import GetConversations from "../utils/GetConversations"
-import AuthStatus from "../utils/AuthStatus"
 import { useEffect, useState } from "react";
 import Conversation from "./Conversation";
 import AddConversation from "./AddConversation";
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
 
 interface Conversation {
     id: string;
@@ -16,14 +17,13 @@ interface Props {
 
 const Conversations = ({setConversation}: Props) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
-
     const [isReload, setIsReload] = useState<boolean>(false)
+
+    const {user} = useContext(UserContext)
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
-    const authstatus = AuthStatus()
-    const username = authstatus?.user?.username
 
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
@@ -34,8 +34,8 @@ const Conversations = ({setConversation}: Props) => {
         setIsReload(false)
         const fetchConversations = async () => {
             try {
-                if(username){
-                    const data = await GetConversations(username);
+                if(user.username){
+                    const data = await GetConversations(user.username);
                     setConversations(data.result);  
                     setLoading(false); 
                 }
@@ -48,7 +48,7 @@ const Conversations = ({setConversation}: Props) => {
         };
 
         fetchConversations();
-    }, [username, isReload]); 
+    }, [user, isReload]); 
 
     if (loading) {
         return <div>Loading...</div>;
@@ -67,11 +67,11 @@ const Conversations = ({setConversation}: Props) => {
             <div className="mt-5 m-b5 flex flex-col gap-2">
                 {conversations &&
                 conversations.map(conv => (
-                    <Conversation key={conv.id} setIsReload={setIsReload} conversation={conv} setConversation={setConversation} username={username}/>
+                    <Conversation key={conv.id} setIsReload={setIsReload} conversation={conv} setConversation={setConversation} username={user.username}/>
                 ))
                 }
             </div>
-            <AddConversation isOpen={isModalOpen} setIsReload={setIsReload} onClose={closeModal} username={username} />
+            <AddConversation isOpen={isModalOpen} setIsReload={setIsReload} onClose={closeModal} username={user.username} />
         </div>
     )
 }

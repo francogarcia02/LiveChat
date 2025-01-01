@@ -6,17 +6,16 @@ import Conversations from "./Conversations";
 import Header from "../components/header/page"
 import { io, Socket } from "socket.io-client";
 import { useState, useEffect, useRef } from "react";
-import AuthStatus from "@/app/utils/AuthStatus";
+
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
 
 const ChatContainer = () => {
     const [messages, setMessages] = useState<{ msg: string; username: string }[]>([]);
     const [conversationId, setConversationId] = useState<string>('')
     const socketRef = useRef<Socket | null>(null);
     
-    
-
-    const data = AuthStatus();
-    const user = data?.user?.username;
+    const {user} = useContext(UserContext)
 
   
     useEffect(() => {
@@ -57,7 +56,7 @@ const ChatContainer = () => {
                 <div className="h-full flex flex-wrap justify-center items-start m-1 gap-1">
                     <Conversations setConversation={setConversationId}/>
                     <div className="sm:w-full lg:w-1/3  h-[250px] lg:h-[540px] flex flex-col border border-gray-300 rounded-lg relative">
-                        <Chat messages={messages} currentUser={user} conversation={conversationId} />
+                        <Chat messages={messages} currentUser={user.username} conversation={conversationId} />
                         <Input onSendMessage={sendMessage} />
                     </div>
                 </div>

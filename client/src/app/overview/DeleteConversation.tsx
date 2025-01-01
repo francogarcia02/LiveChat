@@ -40,12 +40,12 @@ const DeleteConversation: React.FC<ModalProps> = ({ isOpen, onClose, username1, 
             {data ? 
             <div>
                 {data.Error ?
-                <div className="bg-white rounded-lg p-6 shadow-lg w-11/12 max-w-md relative z-10">
-                    <h1 className="text-black">{data.Error}</h1>
+                <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md relative z-10">
+                    <h1 className="text-black font-bold">{data.Error}</h1>
                 </div>
                 :
-                <div className="bg-white rounded-lg p-6 shadow-lg w-11/12 max-w-md relative z-10">
-                    <h1 className="text-black">{data.message}</h1>
+                <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md relative z-10">
+                    <h1 className="text-black font-bold">{data.message}</h1>
                 </div>
                 }
             </div>

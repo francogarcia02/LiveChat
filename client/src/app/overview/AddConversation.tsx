@@ -35,17 +35,22 @@ const AddConversation: React.FC<ModalProps> = ({ isOpen, onClose, username, setI
         })
     }
 
+    const handleClose = () => {
+        setData(undefined)
+        onClose()
+    }
+
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
             {data ? 
             <div>
                 {data.Error ?
-                <div className="bg-white rounded-lg p-6 shadow-lg w-11/12 max-w-md relative z-10">
-                    <h1 className="text-black">{data.Error}</h1>
+                <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md relative z-10">
+                    <h1 className="text-black font-bold">{data.Error}</h1>
                 </div>
                 :
-                <div className="bg-white rounded-lg p-6 shadow-lg w-11/12 max-w-md relative z-10">
-                    <h1 className="text-black">{data.message}</h1>
+                <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md relative z-10">
+                    <h1 className="text-black font-bold">{data.message}</h1>
                 </div>
                 }
             </div>
@@ -58,8 +63,8 @@ const AddConversation: React.FC<ModalProps> = ({ isOpen, onClose, username, setI
                 &times;
                 </button>
                 <h2 className="text-xl font-bold text-black mb-2">Add a conversation</h2>
-                <div className="flex flex-wrap justify-start items-center mt-4 mb-2 gap-2">
-                    <p className="text-black">Username: </p>
+                <div className="flex flex-wrap justify-start items-center mt-10 mb-8 gap-2">
+                    <p className="text-black font-bold">Username: </p>
                     <input type="text" onChange={(e)=> setUsername2(e.target.value)} className="p-2 rounded-lg w-full border text-black" placeholder="Insert Username"/>
                 </div> 
                 <button
@@ -74,7 +79,7 @@ const AddConversation: React.FC<ModalProps> = ({ isOpen, onClose, username, setI
 
             <div
             className="fixed inset-0 bg-black bg-opacity-50"
-            onClick={onClose}
+            onClick={handleClose}
             ></div>
         </div>
     );

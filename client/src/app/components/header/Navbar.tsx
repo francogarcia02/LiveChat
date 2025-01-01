@@ -1,9 +1,10 @@
 'use client'
-import AuthStatus from "@/app/utils/AuthStatus"
 import Link from "next/link"
+import { useContext } from "react"
+import { UserContext } from "@/app/context/userContext"
 
 const Navbar = () => {
-    const authstatus = AuthStatus()
+    const {user} = useContext(UserContext)
 
     const handleLogOut = () => {
         fetch('http://localhost:4000/logout',{
@@ -22,7 +23,7 @@ const Navbar = () => {
                 <Link href='/'>LiveChat</Link>
             </div>
             <div className="me-5">
-                {authstatus?.user?.id? 
+                {user.username ?
                 <form><button type="submit" className="btn" onClick={() => {handleLogOut()}}>LogOut</button></form>
                 :
                 <button type="submit" className="btn" ><Link href={'/login'}>Login</Link></button>

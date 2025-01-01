@@ -134,7 +134,6 @@ app.use(cookieParser())
 
 app.use((req, res, next) => {
     const token = req.cookies.access_token;
-
     req.session = req.session || { user: null };
 
     if (!token) {
@@ -171,9 +170,9 @@ app.post('/login', async (req, res) => {
         )
         res
         .cookie('access_token',token,{
-            httpOnly: true,
+            httpOnly: false,
             secure: process.eventNames.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: 'lax',
             maxAge: 1000 * 60  * 60
         })
         .json({
@@ -217,7 +216,7 @@ app.get('/getData', (req, res) => {
     const {user} = req.session
 
     if(!user){
-        return res.status(403).json({Error : 'Access Denied'})
+        return res.status(403).json({Error : 'User undefined'})
     }
     res.json(user);
 })

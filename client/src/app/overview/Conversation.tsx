@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react"
 import DeleteConversation from "./DeleteConversation"
+import { useContext } from "react"
+import { UserContext } from "../context/userContext"
 
 interface Props {
     username: string | undefined,
@@ -15,7 +17,7 @@ interface Props {
 }
 
 const Conversation = ({conversation, username, setConversation, setIsReload}: Props) => {
-    const [selected, setSelected] = useState<boolean>(false)
+    const {selected, setSelected} = useContext(UserContext)
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const [convUser, setConvUser] = useState<string>()
@@ -34,12 +36,12 @@ const Conversation = ({conversation, username, setConversation, setIsReload}: Pr
     const closeModal = () => setIsModalOpen(false);
 
     return(
-        <div className={`w-full p-2 rounded-lg ${selected ? 'bg-blue-500' : 'bg-blue-800'}`} onClick={()=>{
-            setSelected(true)
+        <div className={`w-full p-2 rounded-lg ${selected === convUser ? 'bg-blue-500' : 'bg-blue-800'}`} onClick={()=>{
+            setSelected(convUser)
             setConversation(conversation.id)
         }}>
             <div className="flex justify-between items-center">
-                <h1 className="font-bold">{conversation.username2}</h1>
+                <h1 className="font-bold">{convUser}</h1>
                 <button className="font-bold" onClick={()=>openModal()}>Delete</button>
             </div>
             
