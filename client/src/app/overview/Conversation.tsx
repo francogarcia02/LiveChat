@@ -35,10 +35,18 @@ const Conversation = ({conversation, username, setConversation, setIsReload}: Pr
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
-    return(
-        <div className={`w-full p-2 rounded-lg ${selected === convUser ? 'bg-blue-500' : 'bg-blue-800'}`} onClick={()=>{
+    const handleSelected = () => {
+        if(selected === convUser){
+            setSelected('')
+        } else {
             setSelected(convUser)
-            setConversation(conversation.id)
+        }
+        setConversation(conversation.id)
+    }
+
+    return(
+        <div className={`w-full p-2 rounded-lg ${selected === convUser ? 'bg-pink-500' : 'bg-pink-800'} hover:bg-pink-500`} onClick={()=>{
+            handleSelected()
         }}>
             <div className="flex justify-between items-center">
                 <h1 className="font-bold">{convUser}</h1>

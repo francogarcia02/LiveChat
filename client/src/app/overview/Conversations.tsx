@@ -4,6 +4,8 @@ import Conversation from "./Conversation";
 import AddConversation from "./AddConversation";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
+import AddCommentIcon from '@mui/icons-material/AddComment';
+
 
 interface Conversation {
     id: string;
@@ -59,12 +61,14 @@ const Conversations = ({setConversation}: Props) => {
     }
 
     return(
-        <div className="flex flex-col justify-start w-1/3 h-full bg-gray-800 pt-2 pb-20 ps-5 pe-5 rounded-lg">
-            <div className="flex justify-between items-center">
-                <h1>Conversations</h1>
-                <button className="btn btn-primary" onClick={()=>openModal()}>Add</button>
+        <div className="flex flex-col justify-start w-full lg:w-1/3 h-full lg:h-[540px] bg-[#383838] pt-2 pb-20 ps-5 pe-5 rounded-lg">
+            <div className="flex justify-between items-center p-2">
+                <h1 className="font-bold text-2xl">Chats</h1>
+                <button onClick={()=>openModal()}>
+                    <AddCommentIcon/>
+                </button>
             </div>
-            <div className="mt-5 m-b5 flex flex-col gap-2">
+            <div className="mt-5 m-b5 flex flex-col gap-2 overflow-y-auto flex-grow">
                 {conversations &&
                 conversations.map(conv => (
                     <Conversation key={conv.id} setIsReload={setIsReload} conversation={conv} setConversation={setConversation} username={user.username}/>

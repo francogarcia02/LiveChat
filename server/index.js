@@ -89,10 +89,9 @@ io.on('connection', async (socket) => {
                 args: [conversationId, username, msg],
             });
         } catch (error) {
-            console.error(error);
+            console.error('Error en el catch: ', error);
             return;
         }
-
         io.to(conversationId).emit('chat_message', {
             id: result.lastInsertRowid.toString(),
             msg,

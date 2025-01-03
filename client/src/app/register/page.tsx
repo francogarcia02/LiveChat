@@ -1,6 +1,7 @@
 'use client'
 import { useState } from "react";
 import Header from "../components/header/page";
+import Check from "../components/Check";
 
 interface RegisterResponse {
     message?: string;
@@ -42,29 +43,24 @@ const Register = () => {
         <section>
             <Header/>
             {response ? 
-            <div className="flex justify-center items-center w-full h-full">
-                <div className="bg-green-600 p-10 m-10 w-full flex flex-col justify-center items-center rounded-lg">
-                    <h1 className="text-white">Registro Exitoso</h1>
-                    <p className="text-white">Volver a home, bienvenido {response.result?.username}</p>
-                </div>
-            </div>
+                <Check title={'Register'} name={response.result?.username}/>
             :
             <div className="w-full h-full flex justify-center items-center mb-5">
-                <div className="flex flex-col gap-10 justify-center items-center border 2px gray w-1/2 p-20 rounded-lg">
-                    <h2 className="text-3xl">Registro de sesion</h2>
+                <div className="w-full lg:w-1/2 flex flex-col gap-10 justify-center items-center bg-[#383838] p-20 pt-10 pb-10  m-5 rounded-lg">
+                    <h2 className="text-3xl">Sing Up</h2>
                     <div className="flex flex-wrap justify-between items-center w-full p-2">
-                        <h5>Usuario: </h5>
+                        <h5>Username: </h5>
                         <input onChange={(e)=>setUsername(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black"/>
                     </div>
                     <div className="flex flex-wrap justify-between items-center w-full p-2">
-                        <h5>Contraseña: </h5>
+                        <h5>Password: </h5>
                         <input onChange={(e)=>setPassword(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black"/>
                     </div>
                     <div className="flex flex-wrap justify-between items-center w-full p-2">
-                        <h5>Repetir contraseña: </h5>
+                        <h5>Repeat password: </h5>
                         <input onChange={(e)=>setPassword2(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black"/>
                     </div>
-                    <button className="btn btn-primary" onClick={() => handleSubmit()}>Registrarse</button>
+                    <button className="btn btn-primary" onClick={() => handleSubmit()}>Register</button>
                 </div>
             </div>
             }

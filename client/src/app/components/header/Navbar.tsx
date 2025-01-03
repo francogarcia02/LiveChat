@@ -24,9 +24,12 @@ const Navbar = () => {
             </div>
             <div className="me-5">
                 {user.username ?
-                <form><button type="submit" className="btn" onClick={() => {handleLogOut()}}>LogOut</button></form>
+                <form><button type="submit" className="font-bold hover:text-pink-500 transition duration-150" onClick={() => {handleLogOut()}}>LogOut</button></form>
                 :
-                <button type="submit" className="btn" ><Link href={'/login'}>Login</Link></button>
+                <div className="flex gap-2 justify-center items-center">
+                    <Link href={'/login'}><button type="submit" className="font-bold hover:text-pink-500 transition duration-150" >Login</button></Link>
+                    <Link href={'/register'}><button type="submit" className="font-bold hover:text-pink-500 transition duration-150" >Sing Up</button></Link>
+                </div>
             }
             </div>
         </div>

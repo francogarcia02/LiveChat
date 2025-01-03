@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 type Message = {
   msg: string;
@@ -11,21 +11,35 @@ type ChatMessagesProps = {
   conversation: string | undefined;
 };
 
-const Chat: React.FC<ChatMessagesProps> = ({ messages, currentUser}) => {
+const Chat: React.FC<ChatMessagesProps> = ({ messages, currentUser }) => {
+  const chatRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTo({
+        top: chatRef.current.scrollHeight,
+        behavior: "smooth", 
+      });
+    }
+  }, [messages]); 
 
   return (
-    <div className="w-full flex flex-col overflow-y-auto flex-grow p-4">
+    <div ref={chatRef} className="flex flex-col overflow-y-auto flex-grow p-4">
       {messages.map((elem, index) => (
         <div
           key={index}
-          className={`w-full flex ${elem.username === currentUser ? "justify-end" : "justify-start"} mb-2`}
+          className={`flex ${
+            elem.username === currentUser ? "justify-end ms-8" : "justify-start me-8"
+          } mb-2`}
         >
           <div
             className={`p-2 rounded-lg ${
-              elem.username === currentUser ? "bg-blue-500 text-white" : "bg-gray-200 text-black"
+              elem.username === currentUser
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-black"
             }`}
           >
-            <p>{elem.msg}</p>
+            <p className="break-all">{elem.msg}</p>
             <small
               className={`${
                 elem.username === currentUser ? "text-gray-300" : "text-gray-700"

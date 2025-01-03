@@ -1,9 +1,11 @@
 'use client'
 
+import TopData from "./TopData";
 import Chat from "./Chat"
 import Input from "./Input";
 import Conversations from "./Conversations";
 import Header from "../components/header/page"
+
 import { io, Socket } from "socket.io-client";
 import { useState, useEffect, useRef } from "react";
 
@@ -15,7 +17,7 @@ const ChatContainer = () => {
     const [conversationId, setConversationId] = useState<string>('')
     const socketRef = useRef<Socket | null>(null);
     
-    const {user} = useContext(UserContext)
+    const {user, selected} = useContext(UserContext)
 
   
     useEffect(() => {
@@ -43,7 +45,7 @@ const ChatContainer = () => {
 
   const sendMessage = (message: string) => {
       if (conversationId) {
-          const messageData = { conversationId, msg: message, username: user || "Anonymous" };
+          const messageData = { conversationId, msg: message, username: user.username || "Anonymous" };
           socketRef.current?.emit("chat_message", messageData);
       }
   };
@@ -53,9 +55,10 @@ const ChatContainer = () => {
         <section>
             <Header/>
             {user ? 
-                <div className="h-full flex flex-wrap justify-center items-start m-1 gap-1">
+                <div className="h-full flex flex-wrap lg:flex-nowrap justify-center items-start m-1 gap-1">
                     <Conversations setConversation={setConversationId}/>
-                    <div className="sm:w-full lg:w-1/3  h-[250px] lg:h-[540px] flex flex-col border border-gray-300 rounded-lg relative">
+                    <div className="w-full h-screen lg:h-[540px] flex flex-col border border-gray-300 rounded-lg relative">
+                        <TopData user={selected}/>
                         <Chat messages={messages} currentUser={user.username} conversation={conversationId} />
                         <Input onSendMessage={sendMessage} />
                     </div>
