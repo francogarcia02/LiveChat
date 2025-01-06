@@ -18,7 +18,7 @@ const Navbar = () => {
     }
 
     return(
-        <div className="flex justify-between items-center with-full m-0 bg-[#383838]">
+        <div className="flex justify-between items-center with-full m-0 bg-[#484848]">
             <div className="p-4 ps-5 font-bold">
                 <Link href='/'>LiveChat</Link>
             </div>

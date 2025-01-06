@@ -6,9 +6,13 @@ import { useContext } from 'react';
 import { UserContext } from "@/app/context/userContext";
 
 const Body = () => {
-    const {user} = useContext(UserContext)
+    const {user, setSelected} = useContext(UserContext)
     const [userr, setUser] = useState<string | undefined>('')
     
+    useEffect(()=>{
+        setSelected('')
+    },[setSelected])
+
     useEffect(()=>{
         if(user.id !== ''){
             setUser(user.username)

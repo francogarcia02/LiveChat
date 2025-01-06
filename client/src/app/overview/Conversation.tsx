@@ -38,14 +38,14 @@ const Conversation = ({conversation, username, setConversation, setIsReload}: Pr
     const handleSelected = () => {
         if(selected === convUser){
             setSelected('')
-        } else {
+        } else{
             setSelected(convUser)
         }
         setConversation(conversation.id)
     }
 
     return(
-        <div className={`w-full p-2 rounded-lg ${selected === convUser ? 'bg-pink-500' : 'bg-pink-800'} hover:bg-pink-500`} onClick={()=>{
+        <div className={`w-full p-2 ${selected === convUser ? 'bg-[#4c4c4c]' : 'bg-[#5f5f5f]'} hover:bg-[#4c4c4c]`} onClick={()=>{
             handleSelected()
         }}>
             <div className="flex justify-between items-center">

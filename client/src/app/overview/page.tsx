@@ -4,7 +4,6 @@ import TopData from "./TopData";
 import Chat from "./Chat"
 import Input from "./Input";
 import Conversations from "./Conversations";
-import Header from "../components/header/page"
 
 import { io, Socket } from "socket.io-client";
 import { useState, useEffect, useRef } from "react";
@@ -16,8 +15,24 @@ const ChatContainer = () => {
     const [messages, setMessages] = useState<{ msg: string; username: string }[]>([]);
     const [conversationId, setConversationId] = useState<string>('')
     const socketRef = useRef<Socket | null>(null);
+
+    const {user, selected, isMobile, setIsMobile} = useContext(UserContext)
+
+    useEffect(() => {
+
+        const checkIsMobile = () => {
+          setIsMobile(window.innerWidth <= 768); 
+        };
     
-    const {user, selected} = useContext(UserContext)
+        checkIsMobile();
+        window.addEventListener("resize", checkIsMobile);
+    
+        return () => {
+          window.removeEventListener("resize", checkIsMobile);
+        };
+    }, [isMobile, setIsMobile]);
+
+    
 
   
     useEffect(() => {
@@ -52,17 +67,41 @@ const ChatContainer = () => {
   
 
     return (
-        <section>
-            <Header/>
+        <section className="">
             {user ? 
-                <div className="h-full flex flex-wrap lg:flex-nowrap justify-center items-start m-1 gap-1">
-                    <Conversations setConversation={setConversationId}/>
-                    <div className="w-full h-screen lg:h-[540px] flex flex-col border border-gray-300 rounded-lg relative">
+                <>
+                {isMobile ?
+                <div className="h-full flex flex-wrap lg:flex-nowrap justify-center items-start gap-0">
+                    {selected ?
+                    <div className="w-full h-screen lg:h-[540px] flex flex-col relative">
                         <TopData user={selected}/>
                         <Chat messages={messages} currentUser={user.username} conversation={conversationId} />
                         <Input onSendMessage={sendMessage} />
                     </div>
+                    :
+                    <Conversations setConversation={setConversationId}/>
+                    }                    
                 </div>
+                :
+                <div className="h-full flex flex-wrap lg:flex-nowrap justify-center items-start">
+                    <Conversations setConversation={setConversationId}/>
+                    <div className="w-full h-screen flex flex-col relative">
+                        {selected ? 
+                        <>
+                        <TopData user={selected}/>
+                        <Chat messages={messages} currentUser={user.username} conversation={conversationId} />
+                        <Input onSendMessage={sendMessage} />
+                        </>
+                        :
+                        <div className="flex h-full w-full justify-center items-center">
+                            <h1 className="text-3xl">Select a chat to talk</h1>
+                        </div>
+                        }
+                        
+                    </div>
+                </div>
+                }
+                </>
             :
                 <div className="flex justify-center items-center p-20 m-20">
                     <h1 className="text-3xl font-bold">Login Required</h1>

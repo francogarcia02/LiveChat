@@ -42,7 +42,7 @@ const Chat: React.FC<ChatMessagesProps> = ({ messages, currentUser }) => {
             <p className="break-all">{elem.msg}</p>
             <small
               className={`${
-                elem.username === currentUser ? "text-gray-300" : "text-gray-700"
+                elem.username === currentUser ? "text-gray-100" : "text-gray-700"
               }`}
             >
               {elem.username}

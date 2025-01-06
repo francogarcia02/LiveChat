@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import CloseIcon from '@mui/icons-material/Close';
 
 type ModalProps = {
   isOpen: boolean;
@@ -60,7 +61,7 @@ const AddConversation: React.FC<ModalProps> = ({ isOpen, onClose, username, setI
                 className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                 onClick={onClose}
                 >
-                &times;
+                <CloseIcon/>
                 </button>
                 <h2 className="text-xl font-bold text-black mb-2">Add a conversation</h2>
                 <div className="flex flex-wrap justify-start items-center mt-10 mb-8 gap-2">

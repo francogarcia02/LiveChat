@@ -29,6 +29,8 @@ export const UserProvider = ({ children }: props ) => {
     const [ user, dispatch] = useReducer( userReducer, INITIAL_STATE );
 
     const [selected, setSelected] = useState<string | undefined>(undefined);
+    
+    const [isMobile, setIsMobile] = useState<boolean>(false);
 
     const login = ( user: UserState ) => {
         dispatch({ type: 'setUser', payload: user })
@@ -59,6 +61,8 @@ export const UserProvider = ({ children }: props ) => {
             login,
             selected,
             setSelected,
+            isMobile,
+            setIsMobile
         }}>
             { children }
         </UserContext.Provider>

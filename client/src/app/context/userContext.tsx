@@ -11,6 +11,8 @@ export type UserContextProps = {
     login: (user: User) => void,
     selected: string | undefined; 
     setSelected: (selected: string | undefined) => void;
+    isMobile: boolean; 
+    setIsMobile: (isMobile: boolean) => void;
 } 
 
 

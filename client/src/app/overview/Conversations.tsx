@@ -5,6 +5,8 @@ import AddConversation from "./AddConversation";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 import AddCommentIcon from '@mui/icons-material/AddComment';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Link from "next/link";
 
 
 interface Conversation {
@@ -61,14 +63,19 @@ const Conversations = ({setConversation}: Props) => {
     }
 
     return(
-        <div className="flex flex-col justify-start w-full lg:w-1/3 h-full lg:h-[540px] bg-[#383838] pt-2 pb-20 ps-5 pe-5 rounded-lg">
-            <div className="flex justify-between items-center p-2">
-                <h1 className="font-bold text-2xl">Chats</h1>
+        <div className="shadow-2xl flex flex-col justify-start w-full lg:w-1/3 h-full lg:h-screen bg-[#383838]">
+            <div className="flex justify-between items-center p-4">
+                <div className="flex justify-start items-center gap-2">
+                    <Link href={'/'}>
+                        <ArrowBackIcon/>
+                    </Link>
+                    <h1 className="font-bold text-2xl">Chats</h1>
+                </div>
                 <button onClick={()=>openModal()}>
                     <AddCommentIcon/>
                 </button>
             </div>
-            <div className="mt-5 m-b5 flex flex-col gap-2 overflow-y-auto flex-grow">
+            <div className="m-b5 flex justify-start items-start flex-col overflow-y-auto flex-grow">
                 {conversations &&
                 conversations.map(conv => (
                     <Conversation key={conv.id} setIsReload={setIsReload} conversation={conv} setConversation={setConversation} username={user.username}/>
