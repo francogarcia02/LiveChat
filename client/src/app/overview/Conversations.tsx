@@ -7,6 +7,7 @@ import { UserContext } from "../context/userContext";
 import AddCommentIcon from '@mui/icons-material/AddComment';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Link from "next/link";
+import Notifications from "./Notifications";
 
 
 interface Conversation {
@@ -71,9 +72,12 @@ const Conversations = ({setConversation}: Props) => {
                     </Link>
                     <h1 className="font-bold text-2xl">Chats</h1>
                 </div>
-                <button onClick={()=>openModal()}>
-                    <AddCommentIcon/>
-                </button>
+                <div className="flex gap-2 justify-center items-center">
+                    <button onClick={()=>openModal()}>
+                        <AddCommentIcon/>
+                    </button>
+                    <Notifications setIsReload={setIsReload} isReload={isReload}/>
+                </div>
             </div>
             <div className="m-b5 flex justify-start items-start flex-col overflow-y-auto flex-grow">
                 {conversations &&

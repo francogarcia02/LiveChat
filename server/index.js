@@ -41,6 +41,17 @@ await db.execute(`
     );   
 `)
 
+
+await db.execute(`
+    CREATE TABLE IF NOT EXISTS notifications (
+    id TEXT PRIMARY KEY,
+    sender TEXT,
+    receiver TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(sender, receiver)
+    )
+`)
+
 await db.execute(`
     CREATE TABLE IF NOT EXISTS conversations (
     id TEXT PRIMARY KEY,
@@ -72,8 +83,6 @@ await db.execute(`
     FOREIGN KEY (sender) REFERENCES users(username) ON DELETE CASCADE
 );
 `)
-
-
 
 io.on('connection', async (socket) => {
     socket.on('join_conversation', (conversationId) => {
@@ -129,7 +138,6 @@ io.on('connection', async (socket) => {
 app.use(express.json());
 app.use(corsMiddleWare())
 app.use(cookieParser())
-
 
 app.use((req, res, next) => {
     const token = req.cookies.access_token;
@@ -222,11 +230,75 @@ app.get('/getData', (req, res) => {
 
 //Messages Routes
 
-app.post('/create-conversation', async (req, res) => {
-    const { username1, username2 } = req.body;
+app.post('/send-notification', async (req, res) => {
+    const {sender, receiver} = req.body
+
     let result
     try {
-        result = await ConversationRepository.create({ user1: username1, user2: username2, db });
+        result = await ConversationRepository.sendNotification({ sender: sender, receiver: receiver, db });
+    } catch (error) {
+        res.status(500).json({'Error en el catch': error})
+    }
+
+    if(!result.error){
+        return res.json({
+            message: 'Notification sent',
+            result: result
+        });
+    }
+
+    console.log(result)
+    if(result.error.code){
+        res.status(500).json({'Error': result.error.code})
+    } else{
+        res.status(500).json({'Error': result.error})
+    }
+    
+})
+
+app.post('/get-notifications', async (req, res) => {
+    const { receiver } = req.body
+    const result = await ConversationRepository.getNotifications({receiver: receiver, db})
+    if(!result.error){
+        return res.json({
+            message: 'Notifications Retrieved Successfully',
+            result: result
+        });
+    }
+
+    res.status(500).json({error: result.error})
+
+})
+
+app.post('/reject-notification', async (req, res) => {
+    const { id } = req.body
+    console.log(id)
+    let result
+    try {
+        result = await ConversationRepository.deleteNotification({id: id, db})
+    } catch (error) {
+        res.status(500).json({'Error en el catch': error})
+    }
+
+    if(!result.error){
+        return res.json({
+            message: 'Delete notification successfull',
+            result: result
+        });
+    }
+    if(result.error.code){
+        res.status(500).json({'Error': result.error.code})
+    } else{
+        res.status(500).json({'Error': result.error})
+    }
+    
+})
+
+app.post('/create-conversation', async (req, res) => {
+    const { username1, username2, idNot } = req.body;
+    let result
+    try {
+        result = await ConversationRepository.create({ user1: username1, user2: username2, idNot: idNot,  db });
     } catch (error) {
         res.status(500).json({'Error en el catch': error})
     }
@@ -237,8 +309,11 @@ app.post('/create-conversation', async (req, res) => {
             result: result
         });
     }
-
-    res.status(500).json({'Error': result.error})
+    if(result.error.code){
+        res.status(500).json({'Error': result.error.code})
+    } else{
+        res.status(500).json({'Error': result.error})
+    }
 });
 
 app.post('/delete-conversation', async (req, res) => {

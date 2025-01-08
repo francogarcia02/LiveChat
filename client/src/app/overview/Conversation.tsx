@@ -50,7 +50,16 @@ const Conversation = ({conversation, username, setConversation, setIsReload}: Pr
         }}>
             <div className="flex justify-between items-center">
                 <h1 className="font-bold">{convUser}</h1>
-                <button className="font-bold" onClick={()=>openModal()}>Delete</button>
+                <button
+                className="font-bold"
+                onClick={(e) => {
+                    e.stopPropagation(); 
+                    setSelected('')
+                    openModal();
+                }}
+                >
+                Delete
+                </button>
             </div>
             
 

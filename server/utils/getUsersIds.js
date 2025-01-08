@@ -28,13 +28,13 @@ export async function getTwoId ({user1, user2, db}) {
     }
     
     if (user1_result.rows.length === 0) {
-        return {error: 'Usuario 1 no encontrado en la base de datos'}
+        return {error: 'Usuario no encontrado en la base de datos'}
     } else{
         user1_id = user1_result.rows[0]
     }
     
     if (user2_result.rows.length === 0) {
-        return {error: 'Usuario 2 no encontrado en la base de datos'}
+        return {error: 'Usuario no encontrado en la base de datos'}
     } else{
         user2_id = user2_result.rows[0]
     }

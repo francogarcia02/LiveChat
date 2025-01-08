@@ -2,9 +2,22 @@ import crypto from 'node:crypto'
 import { getOneId, getTwoId } from '../utils/getUsersIds.js';
 
 export class ConversationRepository {
-    static async create ({user1, user2, db}) {
+    static async create ({user1, user2, idNot, db}) {
         const result = await getTwoId({user1, user2, db})
-        
+
+        try {
+            const deleteResult = await db.execute({
+                sql: `DELETE FROM notifications WHERE id = ?`,
+                args: [idNot]
+            })
+        } catch (error) {
+            return {error: error}
+        }
+
+        if(user1 === user2) {
+            return {error: 'You cant create a conversation with yourself'}
+        }
+
         if(result.error){
             return result
         }
@@ -26,6 +39,7 @@ export class ConversationRepository {
         } catch (error) {   
             return {error: 'Error creando la conversacion', error}
         }
+        console.log(result)
         return response
     }
     
@@ -124,5 +138,70 @@ export class ConversationRepository {
         }
 
         return transformed_conversations
+    }
+
+    static async sendNotification ({sender, receiver, db}) {
+        const result = await getTwoId({user1: sender, user2: receiver, db})
+        if(result.error){
+            return result
+        }
+
+        const id = crypto.randomUUID()
+        let response
+        try {
+            const result = await db.execute({
+                sql: `
+                    INSERT INTO notifications (id, sender, receiver) 
+                    VALUES (?, ?, ?);
+                `,
+                args: [id, sender, receiver]
+            });
+            response = result
+        } catch (error) {   
+            return error
+        }
+        return response
+    }
+
+    static async getNotifications ({receiver, db}) {
+        let notifications
+        try {
+            const result = await db.execute({
+                sql: `SELECT * FROM notifications WHERE receiver = ?`,
+                args: [receiver]
+            })
+            notifications = result.rows
+        } catch (error) {
+            return {error: error}
+        }
+
+        let transformed_notifications = []
+        for(const not of notifications) {
+            const transformed = {
+                id: not.id,
+                receiver: not.receiver,
+                sender: not.sender
+            }
+            transformed_notifications.push(transformed)
+        }
+
+        return transformed_notifications
+    }
+
+    static async deleteNotification ({id, db}) {
+        console.log(id)
+        let result
+        try {
+            result = await db.execute({
+                sql: `DELETE FROM notifications WHERE id = ?`,
+                args: [id]
+            })
+        } catch (error) {
+            return {error: error}
+        }
+        if(result.rowsAffected === 0){
+            return {error: 'Notification didnt finded'}
+        }
+        return result
     }
 }

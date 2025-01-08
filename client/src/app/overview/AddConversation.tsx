@@ -20,18 +20,24 @@ const AddConversation: React.FC<ModalProps> = ({ isOpen, onClose, username, setI
     if (!isOpen) return null;
 
     const handdleAdd = () =>{
-        fetch('http://localhost:4000/create-conversation', {
+        fetch('http://localhost:4000/send-notification', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', 
             },
-            body: JSON.stringify({ username1: username, username2: username2 }), 
+            body: JSON.stringify({ sender: username, receiver: username2 }), 
         })
         .then(res => res.json())
         .then(data => {
             setData(data)
             if(!data.Error){
                 setIsReload(true)
+            }
+            if(data.Error === 'SQLITE_CONSTRAINT'){
+                setData({
+                    Error: 'Conversation just exists',
+                    message: ''
+                })
             }
         })
     }

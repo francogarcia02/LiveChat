@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
 
 type ModalProps = {
   isOpen: boolean;
@@ -16,6 +18,7 @@ interface Data {
 
 const DeleteConversation: React.FC<ModalProps> = ({ isOpen, onClose, username1, username2, setIsReload }) => {
     const [data, setData] = useState<Data>()
+    const {setSelected} = useContext(UserContext)
 
     if (!isOpen) return null;
 
@@ -32,6 +35,7 @@ const DeleteConversation: React.FC<ModalProps> = ({ isOpen, onClose, username1, 
             setData(data)
             if(!data.Error){
                 setIsReload(true)
+                setSelected('')
             }
         })
     }
