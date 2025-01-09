@@ -163,9 +163,13 @@ app.use((req, res, next) => {
 
 app.post('/login', async (req, res) => {
     const {username, password} = req.body
+    
+    let result
+    let token
+
     try {
-        const result = await UserRepository.login({username, password, db})
-        const token = jwt.sign(
+        result = await UserRepository.login({username, password, db})
+        token = jwt.sign(
             {
                 id: result._id, 
                 username: result.username
@@ -175,28 +179,31 @@ app.post('/login', async (req, res) => {
                 expiresIn: '1h'
             }
         )
-        res
-        .cookie('access_token',token,{
-            httpOnly: false,
-            secure: process.eventNames.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 1000 * 60  * 60
-        })
-        .json({
-            message: 'Login successfull',
-            user: { id: result._id, username: result.username }
-        });
     } catch (error) {
-        console.error('Error en el login:', error);
-        
         if (error.message === 'Usuario no encontrado') {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
+            return res.status(404).json({ error: 'Incorrect Password or Username' });
         } else if (error.message === 'Contraseña incorrecta') {
-            return res.status(401).json({ message: 'Contraseña incorrecta' });
+            return res.status(401).json({ error: 'Incorrect Password or Username' });
         } else {
-            return res.status(500).json({ message: 'Error en el servidor' });
+            return res.status(500).json({ error: 'Server error' });
         }
     }
+
+    if(result.error){
+        res.status(400).json({error: result.error})
+    }
+
+    res
+    .cookie('access_token',token,{
+        httpOnly: false,
+        secure: process.eventNames.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 1000 * 60  * 60
+    })
+    .json({
+        message: 'Login successfull',
+        user: { id: result._id, username: result.username }
+    });
 
 })
 

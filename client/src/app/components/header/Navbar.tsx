@@ -23,7 +23,7 @@ const Navbar = () => {
                 <Link href='/'>LiveChat</Link>
             </div>
             <div className="me-5">
-                {user.username ?
+                {user && user.username ?
                 <form><button type="submit" className="font-bold hover:text-pink-500 transition duration-150" onClick={() => {handleLogOut()}}>LogOut</button></form>
                 :
                 <div className="flex gap-2 justify-center items-center">
