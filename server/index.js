@@ -201,16 +201,44 @@ app.post('/login', async (req, res) => {
 })
 
 app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const result = await UserRepository.create({ username, password, db });
-        return res.json({
-            message: 'Register successfull',
-            user: { id: result._id, username: result.username }
-        });
-    } catch (error) {
-        return res.status(500).json({'Dentro del catch: ': error });
+    const { username, password, recaptcha } = req.body;
+
+    const recaptchaResponse = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded', 
+        },
+        body: new URLSearchParams({
+            secret: '6Leb_bEqAAAAAM3wMF4Mcuv0W5oE7FplROYb7aUZ', 
+            response: recaptcha 
+        }).toString(),
+    });
+
+    const data = await recaptchaResponse.json();
+    console.log(data)
+    /*
+    if (!data.success) {
+        return res.status(400).json({ error: 'reCAPTCHA verification failed'});
     }
+    */
+
+    let result
+    
+    try {
+        result = await UserRepository.create({ username, password, db });
+    } catch (error) {
+        res.status(500).json({error: error });
+    }
+
+    if(!result.error){
+        res.json({
+            message: 'Create Conversation successfull',
+            result: result
+        });
+    }
+    res.json({
+        error: result.error
+    });
 });
 
 app.post('/logout', (req, res) => {

@@ -10,8 +10,8 @@ const passwordSchema = z.string()
 
 const userSchema = z.object({
     username: z.string({
-        invalid_type_error: 'Tipo de dato invalido en el nombre de usuario',
-        required_error: 'El nombre de usuario es requerido'
+        invalid_type_error: 'Invalid type of username',
+        required_error: 'Username required'
     }),
     password: passwordSchema
 });

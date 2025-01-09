@@ -9,7 +9,7 @@ export class UserRepository {
         //Validar campos
         const result = validateUser({username: username, password: password})
         if(result.error){
-            return('Error: ', result.error) 
+            return({error: result.error, regex: true}) 
         }
 
         //Verificar que no existe otro usuario con ese nombre  
@@ -23,12 +23,12 @@ export class UserRepository {
                 `,
                 args: [username]
             });
-        
-            if (result.rows.length > 0) {
-                return console.log('Usuario encontrado:', result.rows[0]);
+
+            if (result.rows.length === 1) {
+                return ({error: 'Username just exists'});
             }
         } catch (error) {
-            return console.error('Error ejecutando la consulta:', error);
+            return ({error: error});
         }
 
         const id = crypto.randomUUID()
@@ -44,7 +44,7 @@ export class UserRepository {
                 args: [id, username, passwordHashed]
             });
         } catch (error) {   
-            return console.error('Error registrando el usuario: ', error)
+            return ({error: error});
         }
         
 
