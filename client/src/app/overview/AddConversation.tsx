@@ -20,7 +20,7 @@ const AddConversation: React.FC<ModalProps> = ({ isOpen, onClose, username, setI
     if (!isOpen) return null;
 
     const handdleAdd = () =>{
-        fetch('http://localhost:4000/send-notification', {
+        fetch('https://livechat-server-production-6654.up.railway.app/send-notification', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', 

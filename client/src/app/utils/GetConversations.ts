@@ -13,7 +13,7 @@ interface GetConversationsResponse {
 
 
 async function getConversations(username: string): Promise<GetConversationsResponse> {    
-    const response = await fetch('http://localhost:4000/get-conversations', {
+    const response = await fetch('https://livechat-server-production-6654.up.railway.app/get-conversations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username }),

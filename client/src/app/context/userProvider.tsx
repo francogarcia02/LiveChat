@@ -37,7 +37,7 @@ export const UserProvider = ({ children }: props ) => {
     }
 
     useEffect(()=>{
-        fetch('http://localhost:4000/getData',{
+        fetch('https://livechat-server-production-6654.up.railway.app/getData',{
             credentials: 'include'
         })
         .then(res => res.json())

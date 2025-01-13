@@ -30,7 +30,7 @@ const Register = () => {
                 return;
             }
 
-            fetch('http://localhost:4000/register', {
+            fetch('https://livechat-server-production-6654.up.railway.app/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', 
@@ -80,15 +80,15 @@ const Register = () => {
                     }
                     <div className="flex flex-wrap justify-between items-center w-full p-2">
                         <h5>Username: </h5>
-                        <input onChange={(e)=>setUsername(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black"/>
+                        <input onChange={(e)=>setUsername(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black bg-white"/>
                     </div>
                     <div className="flex flex-wrap justify-between items-center w-full p-2">
                         <h5>Password: </h5>
-                        <input onChange={(e)=>setPassword(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black"/>
+                        <input onChange={(e)=>setPassword(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black bg-white"/>
                     </div>
                     <div className="flex flex-wrap justify-between items-center w-full p-2">
                         <h5>Repeat password: </h5>
-                        <input onChange={(e)=>setPassword2(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black"/>
+                        <input onChange={(e)=>setPassword2(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black bg-white"/>
                     </div>
                     <ReCAPTCHA
                         sitekey={"6Leb_bEqAAAAAEB8aU3IaYTt1a_iZ8SSmNNHYBi7"}

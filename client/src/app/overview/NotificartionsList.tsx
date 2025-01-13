@@ -27,7 +27,7 @@ const NotificationsList = ({isOpen, onClose, notifications, setIsReload}: Props)
     if (!isOpen) return null; 
 
     const handdleAcept = (username1:string, username2:string, id:string) => {
-        fetch('http://localhost:4000/create-conversation', {
+        fetch('https://livechat-server-production-6654.up.railway.app/create-conversation', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', 
@@ -51,7 +51,7 @@ const NotificationsList = ({isOpen, onClose, notifications, setIsReload}: Props)
     }
 
     const handdleDecline = (id:string) => {
-        fetch('http://localhost:4000/reject-notification', {
+        fetch('https://livechat-server-production-6654.up.railway.app/reject-notification', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', 

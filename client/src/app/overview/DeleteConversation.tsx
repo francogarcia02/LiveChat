@@ -23,7 +23,7 @@ const DeleteConversation: React.FC<ModalProps> = ({ isOpen, onClose, username1, 
     if (!isOpen) return null;
 
     const handdleDelete = () =>{
-        fetch('http://localhost:4000/delete-conversation', {
+        fetch('https://livechat-server-production-6654.up.railway.app/delete-conversation', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', 

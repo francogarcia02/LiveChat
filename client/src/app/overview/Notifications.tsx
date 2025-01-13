@@ -29,7 +29,7 @@ const Notifications = ({setIsReload, isReload}: Props) => {
     useEffect(()=>{
         setIsReload(false)
 
-        fetch('http://localhost:4000/get-notifications', {
+        fetch('https://livechat-server-production-6654.up.railway.app/get-notifications', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', 

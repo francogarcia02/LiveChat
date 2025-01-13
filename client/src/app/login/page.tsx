@@ -23,7 +23,7 @@ const Login = () => {
     const {login} = useContext(UserContext)
 
     const handleSubmit = async () => {
-        fetch('http://localhost:4000/login', {
+        fetch('https://livechat-server-production-6654.up.railway.app/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json', 
@@ -63,11 +63,11 @@ const Login = () => {
                     }
                     <div className="flex flex-wrap justify-between items-center w-full p-2">
                         <h5>Username: </h5>
-                        <input onChange={(e)=>setUsername(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black"/>
+                        <input onChange={(e)=>setUsername(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black bg-white"/>
                     </div>
                     <div className="flex flex-wrap justify-between items-center w-full p-2">
                         <h5>Password: </h5>
-                        <input onChange={(e)=>setPassword(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black"/>
+                        <input onChange={(e)=>setPassword(e.target.value)} className="w-full border 1px gray rounded-full p-2 text-black bg-white"/>
                     </div>
                     <button className="btn btn-primary font-bold text-lg" onClick={() => handleSubmit()}>Submit</button>
                 </div>
