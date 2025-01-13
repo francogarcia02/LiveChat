@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import Header from "../components/header/page";
 import Check from "../components/Check";
 import ReCAPTCHA from 'react-google-recaptcha';
+import ErrorWindows from "../components/ErrorsWindows";
 
 interface RegisterResponse {
     message?: string;
@@ -11,7 +12,6 @@ interface RegisterResponse {
       username: string;
     };
     error: string | null,
-    regex: boolean | null
   }
 
 const Register = () => {
@@ -21,7 +21,7 @@ const Register = () => {
     const [response, setResponse] = useState<RegisterResponse>()
     const recaptchaRef = useRef<ReCAPTCHA>(null);
     const [captchaValue, setCaptchaValue] = useState<string | null>('')
-    const [error, setError] = useState<string>('')
+    const [error, setError] = useState<string | string[]>('')
 
     const handleSubmit = async () => {
         if (password === password2) {
@@ -30,7 +30,7 @@ const Register = () => {
                 return;
             }
 
-            fetch('https://livechat-server-production-6654.up.railway.app/register', {
+            fetch('http://localhost:4000/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', 
@@ -44,9 +44,6 @@ const Register = () => {
                 console.log(data)
                 if(data.error){
                     setError(data.error)
-                }
-                if(data.regex){
-
                 }
             })
         } else {
@@ -71,10 +68,8 @@ const Register = () => {
             <div className="w-full h-full flex justify-center items-center mb-5">
                 <div className="w-full lg:w-1/2 flex flex-col gap-10 justify-center items-center bg-[#383838] p-20 pt-10 pb-10  m-5 rounded-lg">
                     <h2 className="text-3xl">Sing Up</h2>
-                    {error ? 
-                    <div className="w-full">
-                        <h1 className="font-bold text-red-500">{error}</h1>
-                    </div>
+                    {error ?
+                    <ErrorWindows errors={error} setError={setError}/>
                     :
                     <></>
                     }

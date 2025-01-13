@@ -32,6 +32,8 @@ export const UserProvider = ({ children }: props ) => {
     
     const [isMobile, setIsMobile] = useState<boolean>(false);
 
+    const [keyBoard, setKeyboard] = useState<boolean>(false);
+
     const login = ( user: UserState ) => {
         dispatch({ type: 'setUser', payload: user })
     }
@@ -62,7 +64,9 @@ export const UserProvider = ({ children }: props ) => {
             selected,
             setSelected,
             isMobile,
-            setIsMobile
+            setIsMobile,
+            keyBoard,
+            setKeyboard
         }}>
             { children }
         </UserContext.Provider>

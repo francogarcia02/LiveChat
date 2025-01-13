@@ -97,11 +97,11 @@ const NotificationsList = ({isOpen, onClose, notifications, setIsReload}: Props)
                                 <h1 className='font-bold text-blue-600'>{noti.sender}</h1>
                                 <h1>Want to talk with you</h1>
                             </div>
-                            <div className='flex justify-center items-center'>
-                                <button onClick={()=>{handdleAcept(noti.sender, noti.receiver, noti.id)}}>
+                            <div className='flex justify-center items-center gap-2'>
+                                <button className='hover:text-green-400' onClick={()=>{handdleAcept(noti.sender, noti.receiver, noti.id)}}>
                                     <CheckIcon/>
                                 </button>
-                                <button onClick={()=> handdleDecline(noti.id)}>
+                                <button className='hover:text-red-400' onClick={()=> handdleDecline(noti.id)}>
                                     <CloseIcon/>
                                 </button>
                             </div>

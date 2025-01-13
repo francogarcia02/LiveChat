@@ -13,6 +13,8 @@ export type UserContextProps = {
     setSelected: (selected: string | undefined) => void;
     isMobile: boolean; 
     setIsMobile: (isMobile: boolean) => void;
+    keyBoard: boolean;
+    setKeyboard: (keyBoard: boolean) => void
 } 
 
 

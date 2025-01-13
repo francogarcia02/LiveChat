@@ -13,6 +13,9 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      height: {
+        'custom-chat': 'calc(100vh - 33vh)',
+      },
     },
   },
   plugins: [daisyui],

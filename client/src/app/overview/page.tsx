@@ -16,22 +16,8 @@ const ChatContainer = () => {
     const [conversationId, setConversationId] = useState<string>('');
     const socketRef = useRef<Socket | null>(null);
 
-    const { user, selected, isMobile, setIsMobile } = useContext(UserContext);
+    const { user, selected, isMobile, setIsMobile, keyBoard } = useContext(UserContext);
 
-    // Ajuste dinámico de altura para manejar el teclado en móviles
-    useEffect(() => {
-        const updateVH = () => {
-            const vh = window.innerHeight * 0.01;
-            document.documentElement.style.setProperty('--vh', `${vh}px`);
-        };
-
-        updateVH();
-        window.addEventListener("resize", updateVH);
-
-        return () => {
-            window.removeEventListener("resize", updateVH);
-        };
-    }, []);
 
     // Detectar si es móvil y actualizar el estado
     useEffect(() => {
@@ -86,8 +72,7 @@ const ChatContainer = () => {
                         <div className="h-full flex flex-wrap justify-center items-start gap-0">
                             {selected ?
                                 <div
-                                    className="w-full flex flex-col relative"
-                                    style={{ height: 'calc(var(--vh, 1vh) * 100)' }}
+                                    className={`w-full flex flex-col relative ${keyBoard ? 'h-custom-chat' : 'h-screen'}`}
                                 >
                                     <TopData user={selected} />
                                     <Chat messages={messages} currentUser={user.username} conversation={conversationId} />
