@@ -12,7 +12,7 @@ import { useContext } from "react";
 import { UserContext } from "../context/userContext";
 
 const ChatContainer = () => {
-    const [messages, setMessages] = useState<{ msg: string; username: string }[]>([]);
+    const [messages, setMessages] = useState<{ msg: string; username: string; created_at: string }[]>([]);
     const [conversationId, setConversationId] = useState<string>('');
     const socketRef = useRef<Socket | null>(null);
 
@@ -33,7 +33,7 @@ const ChatContainer = () => {
         };
     }, [setIsMobile]);
 
-    // Manejo de la conexión del socket
+    // Manejo de la conexión del socket  
     useEffect(() => {
         if (conversationId) {
             setMessages([]);
@@ -45,11 +45,11 @@ const ChatContainer = () => {
 
             socket.emit("join_conversation", conversationId);
 
-            socket.on("chat_message", ({ msg, username }) => {
-                setMessages((prevMessages) => [...prevMessages, { msg, username }]);
-            });
-
             socket.emit("fetch_messages", { conversationId });
+
+            socket.on("chat_message", ({ msg, username, created_at }) => {
+                setMessages((prevMessages) => [...prevMessages, { msg, username, created_at }]);
+            });
 
             return () => {
                 socket.disconnect();
@@ -65,17 +65,17 @@ const ChatContainer = () => {
     };
 
     return (
-        <section className="">
+        <section className={`${keyBoard ? 'h-custom-chat' : ''} overflow-hidden`}>
             {user ?
                 <>
                     {isMobile ?
                         <div className="h-full flex flex-wrap justify-center items-start gap-0">
                             {selected ?
                                 <div
-                                    className={`w-full flex flex-col relative ${keyBoard ? 'h-custom-chat' : 'h-screen'}`}
+                                    className={`w-full flex flex-col relative ${keyBoard ? 'h-custom-chat' : 'h-svh'}`}
                                 >
                                     <TopData user={selected} />
-                                    <Chat messages={messages} currentUser={user.username} conversation={conversationId} />
+                                    <Chat messages={messages} conversation={conversationId} />
                                     <Input onSendMessage={sendMessage} />
                                 </div>
                                 :
@@ -89,7 +89,7 @@ const ChatContainer = () => {
                                 {selected ?
                                     <>
                                         <TopData user={selected} />
-                                        <Chat messages={messages} currentUser={user.username} conversation={conversationId} />                       
+                                        <Chat messages={messages} conversation={conversationId} />                       
                                         <Input onSendMessage={sendMessage} />
                                     </>
                                     :

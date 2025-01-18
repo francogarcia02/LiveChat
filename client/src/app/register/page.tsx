@@ -30,7 +30,7 @@ const Register = () => {
                 return;
             }
 
-            fetch('http://localhost:4000/register', {
+            fetch('https://livechat-server-production-6654.up.railway.app/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json', 

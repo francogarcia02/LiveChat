@@ -72,7 +72,7 @@ const AddConversation: React.FC<ModalProps> = ({ isOpen, onClose, username, setI
                 <h2 className="text-xl font-bold text-black mb-2">Add a conversation</h2>
                 <div className="flex flex-wrap justify-start items-center mt-10 mb-8 gap-2">
                     <p className="text-black font-bold">Username: </p>
-                    <input type="text" onChange={(e)=> setUsername2(e.target.value)} className="p-2 rounded-lg w-full border text-black" placeholder="Insert Username"/>
+                    <input type="text" onChange={(e)=> setUsername2(e.target.value)} className="p-2 rounded-lg w-full border text-black bg-white" placeholder="Insert Username"/>
                 </div> 
                 <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"

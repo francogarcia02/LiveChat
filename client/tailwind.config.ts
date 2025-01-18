@@ -14,7 +14,7 @@ export default {
         foreground: "var(--foreground)",
       },
       height: {
-        'custom-chat': 'calc(100vh - 33vh)',
+        'custom-chat': 'calc(100vh - 50vh)',
       },
     },
   },

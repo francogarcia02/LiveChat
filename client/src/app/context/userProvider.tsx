@@ -40,19 +40,21 @@ export const UserProvider = ({ children }: props ) => {
 
     useEffect(()=>{
         fetch('https://livechat-server-production-6654.up.railway.app/getData',{
-            credentials: 'include'
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', 
+            },
+            credentials: 'include',
         })
         .then(res => res.json())
         .then(data => {
-            const modifiedData = {
-                id: data.id,
-                username: data.username
-            }
-            dispatch({
-                type: 'setUser',
-                payload: modifiedData,
-            });
-            console.log(INITIAL_STATE)
+            console.log(data)
+            if(data.success){
+                dispatch({
+                    type: 'setUser',
+                    payload: data.user,
+                });
+            } 
         })
     },[])
 

@@ -73,12 +73,14 @@ await db.execute(`
 );
 `)
 
+
 await db.execute(`
     CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     conversation_id TEXT NOT NULL,     
     sender TEXT NOT NULL,           
     content TEXT,  
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE,
     FOREIGN KEY (sender) REFERENCES users(username) ON DELETE CASCADE
 );
@@ -101,14 +103,25 @@ io.on('connection', async (socket) => {
             console.error('Error en el catch: ', error);
             return;
         }
+
+        let resultToCreatedAt
+        try {
+            resultToCreatedAt = await db.execute({
+                sql: `SELECT * FROM messages WHERE id = ?`,
+                args: [result.lastInsertRowid]
+            })
+        } catch (error) {
+            console.log('Error en el segundo catch del chat_message: ', error)
+            return
+        }
+
         io.to(conversationId).emit('chat_message', {
             id: result.lastInsertRowid.toString(),
             msg,
             username,
+            created_at: resultToCreatedAt.rows[0].created_at
         });
     });
-
-    
 
     socket.on('fetch_messages', async ({ conversationId, offset = 0 }) => {
         try {
@@ -122,6 +135,7 @@ io.on('connection', async (socket) => {
                     id: row.id.toString(),
                     msg: row.content,
                     username: row.sender,
+                    created_at: row.created_at
                 });
             });
         } catch (error) {
@@ -185,6 +199,7 @@ app.post('/login', async (req, res) => {
         } else if (error.message === 'Contraseña incorrecta') {
             return res.status(401).json({ error: 'Incorrect Password or Username' });
         } else {
+            console.log(error)
             return res.status(500).json({ error: 'Server error' });
         }
     }
@@ -194,11 +209,11 @@ app.post('/login', async (req, res) => {
     }
 
     res
-    .cookie('access_token',token,{
-        httpOnly: false,
-        secure: process.eventNames.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 1000 * 60  * 60
+    .cookie('access_token', token, {
+        httpOnly: true, 
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: 'Lax', 
+        maxAge: 1000 * 60 * 60, 
     })
     .json({
         message: 'Login successfull',
@@ -222,11 +237,10 @@ app.post('/register', async (req, res) => {
     });
 
     const data = await recaptchaResponse.json();
-    /*
+
     if (!data.success) {
         return res.status(400).json({ error: 'reCAPTCHA verification failed'});
     }
-    */
 
     let result
     
@@ -253,13 +267,19 @@ app.post('/logout', (req, res) => {
     .redirect('/')
 })
 
-app.get('/getData', (req, res) => {
+app.post('/getData', async (req, res) => {
     const {user} = req.session
-
     if(!user){
-        return res.status(403).json({Error : 'User undefined'})
+        return res.status(403).json({error : 'User undefined'})
     }
-    res.json(user);
+    res.json({
+        success: true,
+        user: {
+            id: user.id,
+            username: user.username
+        }
+    });
+
 })
 
 //Messages Routes
